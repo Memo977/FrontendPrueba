@@ -1,0 +1,209 @@
+/* Estilos para el dashboard */
+
+/* Tarjetas de estadísticas */
+.stats-card {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stats-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    color: white;
+}
+
+.stats-icon i {
+    font-size: 1.5rem;
+}
+
+.stats-info {
+    flex: 1;
+}
+
+.stats-info h5 {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.stats-info h3 {
+    margin-bottom: 0;
+    font-weight: bold;
+    color: #343a40;
+}
+
+/* Tarjetas de acceso rápido */
+.quick-access-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    text-align: center;
+    height: 100%;
+}
+
+.quick-access-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: inherit;
+}
+
+.icon-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px;
+    color: white;
+}
+
+.icon-wrapper i {
+    font-size: 1.8rem;
+}
+
+.quick-access-card h5 {
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.quick-access-card p {
+    font-size: 0.85rem;
+    margin-bottom: 0;
+}
+
+/* Estilo para las tarjetas de perfil */
+.profile-card {
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.profile-card:hover {
+    transform: translateY(-5px);
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    overflow: hidden;
+    border: 3px solid #f8f9fa;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.profile-actions a {
+    margin-right: 5px;
+}
+
+/* Estilo para las tarjetas de playlist */
+.playlist-card {
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.playlist-card:hover {
+    transform: translateY(-5px);
+}
+
+.playlist-thumbnail {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f1f3f5;
+    border-radius: 8px;
+    margin-right: 15px;
+}
+
+.playlist-thumbnail i {
+    font-size: 1.8rem;
+    color: #0d6efd;
+}
+
+.playlist-info {
+    flex: 1;
+}
+
+.playlist-title {
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.playlist-meta {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.playlist-videos-count {
+    background-color: #e9ecef;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-right: 8px;
+}
+
+.playlist-profiles-count {
+    background-color: #e9ecef;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+/* Estilos para los encabezados de sección */
+.card-header .card-title i {
+    vertical-align: middle;
+    margin-top: -3px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stats-card {
+        margin-bottom: 15px;
+    }
+    
+    .quick-access-card {
+        margin-bottom: 15px;
+    }
+    
+    .icon-wrapper {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .icon-wrapper i {
+        font-size: 1.5rem;
+    }
+}

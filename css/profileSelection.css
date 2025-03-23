@@ -1,0 +1,174 @@
+/* Estilos para la página de selección de perfiles */
+body {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-container {
+    margin-top: 40px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.logo {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #0d6efd;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profiles-title {
+    text-align: center;
+    color: #495057;
+    margin-bottom: 30px;
+}
+
+.profile-card {
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 30px;
+}
+
+.profile-card:hover {
+    transform: scale(1.05);
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+    border-color: #0d6efd;
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+}
+
+.profile-name {
+    font-weight: 500;
+    color: #495057;
+    margin-top: 10px;
+}
+
+.admin-profile .profile-avatar {
+    background-color: #e9ecef;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.admin-profile .bi-person-gear {
+    font-size: 3rem;
+    color: #6c757d;
+}
+
+.add-profile-btn {
+    border: 2px dashed #ced4da;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px;
+    transition: all 0.3s ease;
+}
+
+.add-profile-btn:hover {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.add-profile-btn i {
+    font-size: 2.5rem;
+    color: #6c757d;
+}
+
+.account-actions {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.account-actions .btn {
+    margin: 0 10px;
+}
+
+/* PIN Modal Styles */
+.pin-circle {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #dee2e6;
+    display: inline-block;
+    margin: 0 5px;
+}
+
+.pin-circle.filled {
+    background-color: #0d6efd;
+}
+
+.pin-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.pin-button {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    background: white;
+    border: 1px solid #ced4da;
+    transition: all 0.2s ease;
+}
+
+.pin-button:hover {
+    background-color: #f8f9fa;
+    border-color: #0d6efd;
+    transform: scale(1.05);
+}
+
+/* Estilos para la versión oscura (para implementar más tarde) */
+body.dark-mode {
+    background-color: #121212;
+    color: #f8f9fa;
+}
+
+body.dark-mode .profiles-title {
+    color: #f8f9fa;
+}
+
+body.dark-mode .profile-name {
+    color: #f8f9fa;
+}
+
+body.dark-mode .logo {
+    color: #4dabf7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .pin-button {
+        width: 60px;
+        height: 60px;
+    }
+}
