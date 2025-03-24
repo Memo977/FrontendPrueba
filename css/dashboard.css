@@ -207,3 +207,122 @@
         font-size: 1.5rem;
     }
 }
+
+/* Estilos mejorados para la tarjeta de bienvenida */
+
+.welcome-card {
+    padding: 30px;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 25px;
+    transition: all 0.3s ease;
+}
+
+.welcome-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-card h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.welcome-card p {
+    color: #6c757d;
+    margin-bottom: 25px;
+}
+
+.stats-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+
+.stat-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    margin: 0 10px 10px;
+    transition: all 0.3s ease;
+    min-width: 150px;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    margin-right: 15px;
+}
+
+.stat-icon i {
+    font-size: 1.8rem;
+    color: white;
+}
+
+.stat-info {
+    line-height: 1.2;
+}
+
+.stat-info h4 {
+    color: #6c757d;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin: 0 0 5px;
+}
+
+.stat-info h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+    color: #333;
+}
+
+/* Colores de iconos */
+.stat-icon.bg-profiles {
+    background-color: #4285F4; /* Azul Google */
+}
+
+.stat-icon.bg-playlists {
+    background-color: #0F9D58; /* Verde Google */
+}
+
+.stat-icon.bg-videos {
+    background-color: #DB4437; /* Rojo Google */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .welcome-card {
+        padding: 20px;
+    }
+    
+    .stat-item {
+        margin-bottom: 15px;
+        min-width: calc(50% - 20px);
+    }
+}
+
+@media (max-width: 576px) {
+    .stat-item {
+        flex: 0 0 100%;
+        margin: 0 0 15px;
+    }
+    
+    .welcome-card h2 {
+        font-size: 1.5rem;
+    }
+}
