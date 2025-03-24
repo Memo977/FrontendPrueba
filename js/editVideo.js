@@ -234,20 +234,17 @@ function updateVideoPreview(youtubeUrl) {
     
     console.log("Video ID extraído:", videoId);
     
-    // Crear iframe para la vista previa
+    // Crear iframe para la vista previa con el formato actualizado
     const videoPreview = document.getElementById('videoPreview');
-    videoPreview.innerHTML = '';  // Limpiar contenido previo
-    
-    const iframe = document.createElement('iframe');
-    iframe.src = `https://www.youtube.com/embed/${videoId}`;
-    iframe.title = "YouTube video player";
-    iframe.setAttribute('frameborder', '0');
-    iframe.setAttribute('allowfullscreen', '');
-    iframe.setAttribute('width', '100%');
-    iframe.setAttribute('height', '100%');
-    iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-    
-    videoPreview.appendChild(iframe);
+    videoPreview.innerHTML = `<iframe 
+        width="100%" 
+        height="100%" 
+        src="https://www.youtube.com/embed/${videoId}" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        referrerpolicy="strict-origin-when-cross-origin" 
+        allowfullscreen></iframe>`;
     
     // Informar al usuario sobre carga exitosa
     showNotification('info', 'Vista previa actualizada');
@@ -261,16 +258,35 @@ function updateVideoPreview(youtubeUrl) {
 function getYouTubeVideoId(url) {
     if (!url) return null;
     
-    // Intentar varios patrones para diferentes formatos de URL de YouTube
-    
-    // Formato estándar: youtube.com/watch?v=ID
-    let match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/e\/|youtube\/watch\?v=|youtube\.com\/watch\?feature=player_embedded&v=)([^#\&\?]*)/);
-    if (match && match[1] && match[1].length === 11) {
-        return match[1];
+    // Intentar extraer ID usando URL API para un análisis más confiable
+    try {
+        const urlObj = new URL(url);
+        const pathname = urlObj.pathname;
+        
+        // youtube.com/watch?v=ID
+        if (urlObj.searchParams.has('v')) {
+            const id = urlObj.searchParams.get('v');
+            if (id && id.length === 11) return id;
+        }
+        
+        // youtu.be/ID
+        if (urlObj.hostname === 'youtu.be' && pathname.length > 1) {
+            const id = pathname.substring(1);
+            if (id && id.length === 11) return id;
+        }
+        
+        // youtube.com/embed/ID
+        if (pathname.includes('/embed/')) {
+            const id = pathname.split('/embed/')[1].split('?')[0];
+            if (id && id.length === 11) return id;
+        }
+    } catch (e) {
+        console.log("Error al parsear URL, usando método de respaldo con regex");
     }
     
-    // Formato alternativo: youtube.com/v/ID
-    match = url.match(/youtube\.com\/v\/([^#\&\?]*)/);
+    // Método de respaldo con expresiones regulares
+    // Formato estándar: youtube.com/watch?v=ID
+    let match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/e\/|youtube\/watch\?v=|youtube\.com\/watch\?feature=player_embedded&v=)([^#\&\?]*)/);
     if (match && match[1] && match[1].length === 11) {
         return match[1];
     }
@@ -287,7 +303,7 @@ function getYouTubeVideoId(url) {
         return match[1];
     }
     
-    // Si todos los patrones fallan, intentar el patrón general como último recurso
+    // Si todos los patrones fallan, intentar el patrón general
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     match = url.match(regExp);
     

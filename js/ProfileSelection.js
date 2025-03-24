@@ -53,18 +53,26 @@ function loadProfiles() {
 function renderProfiles(profiles) {
     const profilesContainer = document.getElementById('profilesContainer');
     
-    // Limpiar todos los perfiles excepto el de administrador
-    const adminProfile = document.querySelector('.admin-profile');
+    // Limpiar contenedor de perfiles
     profilesContainer.innerHTML = '';
+    
+    // Verificar si hay perfiles
+    if (profiles.length === 0) {
+        profilesContainer.innerHTML = `
+            <div class="col-12 text-center">
+                <div class="alert alert-info" role="alert">
+                    No hay perfiles infantiles disponibles.
+                </div>
+            </div>
+        `;
+        return;
+    }
     
     // Añadir todos los perfiles restringidos
     profiles.forEach(profile => {
         const profileElement = createProfileElement(profile);
         profilesContainer.appendChild(profileElement);
     });
-    
-    // Añadir el perfil de administrador
-    profilesContainer.appendChild(adminProfile);
     
     // Añadir el botón "Añadir perfil" solo cuando el administrador está autenticado
     const token = localStorage.getItem('token');
@@ -117,8 +125,8 @@ function createAddProfileElement() {
         if (localStorage.getItem('token')) {
             window.location.href = 'dashboard.html';
         } else {
-            // Si no hay token válido, mostrar el modal de login de administrador
-            showAdminLoginModal();
+            // Si no hay token válido, redirigir a la página de login
+            window.location.href = 'login.html';
         }
     });
     
@@ -127,20 +135,10 @@ function createAddProfileElement() {
 
 // Configurar todos los event listeners
 function setupEventListeners() {
-    // Botón para cambiar de cuenta
+    // Botón para cambiar de cuenta - redirige directamente a login
     document.getElementById('switchAccountBtn').addEventListener('click', () => {
-        showAdminLoginModal();
-    });
-    
-    // Evento de click en el perfil de administrador
-    document.querySelector('.admin-profile').addEventListener('click', () => {
-        showAdminLoginModal();
-    });
-    
-    // Manejar envío del formulario de login de administrador
-    document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        handleAdminLogin();
+        // Redirigir directamente a la página de login
+        window.location.href = 'login.html';
     });
 }
 
@@ -183,18 +181,6 @@ function showPinModal(profileName) {
     // Mostrar el modal
     const pinModal = new bootstrap.Modal(document.getElementById('pinModal'));
     pinModal.show();
-}
-
-// Mostrar modal de login de administrador
-function showAdminLoginModal() {
-    // Limpiar campos y errores
-    document.getElementById('adminEmail').value = '';
-    document.getElementById('adminPassword').value = '';
-    document.getElementById('adminLoginError').style.display = 'none';
-    
-    // Mostrar el modal
-    const adminLoginModal = new bootstrap.Modal(document.getElementById('adminLoginModal'));
-    adminLoginModal.show();
 }
 
 // Añadir un dígito al PIN actual
@@ -271,77 +257,6 @@ function verifyPin() {
     });
 }
 
-// Manejar login de administrador
-function handleAdminLogin() {
-    const email = document.getElementById('adminEmail').value;
-    const password = document.getElementById('adminPassword').value;
-    
-    // Validación básica
-    if (!email || !password) {
-        document.getElementById('adminLoginError').textContent = 'Por favor, completa todos los campos.';
-        document.getElementById('adminLoginError').style.display = 'block';
-        return;
-    }
-    
-    // Datos para la autenticación
-    const loginData = {
-        username: email,
-        password: password
-    };
-    
-    // Llamada a la API para iniciar sesión
-    fetch(`${API_URL}/session`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(loginData)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Credenciales incorrectas');
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Login exitoso - guardar token y adminId
-        localStorage.setItem('token', data.token);
-        
-        // Decodificar token para obtener adminId
-        const adminId = decodeToken(data.token).id;
-        localStorage.setItem('adminId', adminId);
-        
-        // Cerrar modal y redirigir al dashboard
-        const adminLoginModal = bootstrap.Modal.getInstance(document.getElementById('adminLoginModal'));
-        adminLoginModal.hide();
-        
-        // Redirigir al dashboard de administrador
-        window.location.href = 'dashboard.html';
-    })
-    .catch(error => {
-        console.error('Error de inicio de sesión:', error);
-        // Mostrar mensaje de error
-        document.getElementById('adminLoginError').textContent = 'Credenciales incorrectas. Inténtalo de nuevo.';
-        document.getElementById('adminLoginError').style.display = 'block';
-    });
-}
-
-// Decodificar token JWT
-function decodeToken(token) {
-    try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        
-        return JSON.parse(jsonPayload);
-    } catch (error) {
-        console.error('Error al decodificar token:', error);
-        return {};
-    }
-}
-
 // Comprobar si una cadena es una URL válida
 function isValidUrl(string) {
     try {
@@ -354,6 +269,12 @@ function isValidUrl(string) {
 
 // Mostrar mensaje de error
 function showErrorMessage(message) {
-    // Implementar según el diseño (alerta, toast, etc.)
-    alert(message);
+    const profilesContainer = document.getElementById('profilesContainer');
+    profilesContainer.innerHTML = `
+        <div class="col-12 text-center">
+            <div class="alert alert-danger" role="alert">
+                ${message}
+            </div>
+        </div>
+    `;
 }

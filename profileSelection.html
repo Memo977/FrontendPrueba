@@ -19,14 +19,6 @@
         
         <div class="row justify-content-center" id="profilesContainer">
             <!-- Los perfiles se cargarán dinámicamente aquí -->
-            
-            <!-- Perfil de Administrador (Ejemplo estático) -->
-            <div class="col-6 col-sm-4 col-md-3 col-lg-2 profile-card admin-profile">
-                <div class="profile-avatar" data-profile-type="admin">
-                    <i class="bi bi-person-gear"></i>
-                </div>
-                <div class="profile-name">Administrador</div>
-            </div>
         </div>
         
         <div class="account-actions">
@@ -79,37 +71,6 @@
                     <div id="pinError" class="text-danger mt-3" style="display: none;">
                         PIN incorrecto. Inténtalo de nuevo.
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para iniciar sesión como administrador -->
-    <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-labelledby="adminLoginModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="adminLoginModalLabel">Iniciar sesión como administrador</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="adminLoginForm">
-                        <div class="mb-3">
-                            <label for="adminEmail" class="form-label">Correo electrónico</label>
-                            <input type="email" class="form-control" id="adminEmail" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="adminPassword" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="adminPassword" required>
-                        </div>
-                        <div id="adminLoginError" class="text-danger mb-3" style="display: none;">
-                            Credenciales incorrectas. Inténtalo de nuevo.
-                        </div>
-                        <div class="text-end">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Iniciar sesión</button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
