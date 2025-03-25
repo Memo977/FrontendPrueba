@@ -1,32 +1,6 @@
 // Configuración global para peticiones API
 const API_URL = 'http://localhost:3000/api';
 
-// Función para mostrar notificaciones
-function showNotification(title, message, isError = false) {
-    const notificationEl = document.getElementById('notification');
-    const notificationTitle = document.getElementById('notificationTitle');
-    const notificationMessage = document.getElementById('notificationMessage');
-    
-    if (notificationEl && notificationTitle && notificationMessage) {
-        notificationTitle.textContent = title;
-        notificationMessage.textContent = message;
-        
-        // Cambiar clase según sea error o éxito
-        notificationEl.classList.remove('bg-danger', 'bg-success', 'text-white');
-        if (isError) {
-            notificationEl.classList.add('bg-danger', 'text-white');
-        } else {
-            notificationEl.classList.add('bg-success', 'text-white');
-        }
-        
-        const toast = new bootstrap.Toast(notificationEl);
-        toast.show();
-    } else {
-        // Fallback si los elementos no existen
-        alert(`${title}: ${message}`);
-    }
-}
-
 // Guardar datos del usuario en localStorage - Versión mejorada
 function saveAuthData(payload, token, adminPin) {
     localStorage.setItem('token', token);
@@ -77,25 +51,34 @@ async function logout() {
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Error al cerrar sesión');
+            // Aquí ignoramos el error de API y mostramos nuestro propio mensaje
+            console.warn('Error al cerrar sesión en API pero continuamos con cierre local');
         }
 
-        // Limpiar localStorage y redirigir
+        // Siempre limpiar localStorage y redirigir independientemente de la respuesta del API
         localStorage.removeItem('token');
         localStorage.removeItem('adminId');
         localStorage.removeItem('userName');
         localStorage.removeItem('profilePin');
-        localStorage.removeItem('adminPin'); // También eliminamos el adminPin
-        window.location.href = 'login.html';
+        localStorage.removeItem('adminPin'); 
+        
+        // Mensaje de éxito antes de redirigir
+        if (window.Notifications) {
+            window.Notifications.showSuccess('auth_logout_success', 'Sesión cerrada');
+        }
+        
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 1000);
     } catch (error) {
         console.error('Error en logout:', error);
-        // Si hay error de red o el servidor no responde, limpiamos igualmente
+        // Incluso si hay un error, limpiamos el almacenamiento local
         localStorage.removeItem('token');
         localStorage.removeItem('adminId');
         localStorage.removeItem('userName');
         localStorage.removeItem('profilePin');
         localStorage.removeItem('adminPin');
+        
         window.location.href = 'login.html';
     }
 }
@@ -136,14 +119,95 @@ document.addEventListener('DOMContentLoaded', function() {
     // Formulario de registro
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
+        // Validación en tiempo real
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const repeatPasswordInput = document.getElementById('repeatPassword');
+        const phoneInput = document.getElementById('phone');
+        const pinInput = document.getElementById('pin');
+        
+        // Validación de email en tiempo real
+        if (emailInput) {
+            emailInput.addEventListener('blur', function() {
+                if (this.value.trim() === '') {
+                    window.Notifications.showFieldError(this, 'validation_required');
+                } else if (!window.Notifications.validateEmail(this.value)) {
+                    window.Notifications.showFieldError(this, 'validation_email');
+                } else {
+                    window.Notifications.clearFieldError(this);
+                }
+            });
+        }
+        
+        // Validación de contraseña en tiempo real
+        if (passwordInput) {
+            passwordInput.addEventListener('blur', function() {
+                if (this.value.trim() === '') {
+                    window.Notifications.showFieldError(this, 'validation_required');
+                } else if (this.value.length < 8) {
+                    window.Notifications.showFieldError(this, 'validation_password_length');
+                } else {
+                    window.Notifications.clearFieldError(this);
+                }
+            });
+        }
+        
+        // Validación de repetir contraseña en tiempo real
+        if (repeatPasswordInput && passwordInput) {
+            repeatPasswordInput.addEventListener('blur', function() {
+                if (this.value.trim() === '') {
+                    window.Notifications.showFieldError(this, 'validation_required');
+                } else if (this.value !== passwordInput.value) {
+                    window.Notifications.showFieldError(this, 'validation_password_match');
+                } else {
+                    window.Notifications.clearFieldError(this);
+                }
+            });
+        }
+        
+        // Validación de teléfono en tiempo real
+        if (phoneInput) {
+            phoneInput.addEventListener('blur', function() {
+                if (this.value.trim() !== '' && !window.Notifications.validatePhone(this.value)) {
+                    window.Notifications.showFieldError(this, 'validation_phone_format');
+                } else {
+                    window.Notifications.clearFieldError(this);
+                }
+            });
+        }
+        
+        // Validación de PIN en tiempo real
+        if (pinInput) {
+            pinInput.addEventListener('blur', function() {
+                if (this.value.trim() === '') {
+                    window.Notifications.showFieldError(this, 'validation_required');
+                } else if (!window.Notifications.validatePin(this.value)) {
+                    window.Notifications.showFieldError(this, 'validation_pin_format');
+                } else {
+                    window.Notifications.clearFieldError(this);
+                }
+            });
+        }
+        
+        // Evento de envío del formulario
         registerForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             // Validar que las contraseñas coincidan
             if (document.getElementById('password').value !== document.getElementById('repeatPassword').value) {
-                showNotification('Error', 'Las contraseñas no coinciden', true);
+                window.Notifications.showFieldError(document.getElementById('repeatPassword'), 'validation_password_match');
                 return;
             }
+            
+            // Validar el PIN
+            const pin = document.getElementById('pin').value;
+            if (!window.Notifications.validatePin(pin)) {
+                window.Notifications.showFieldError(document.getElementById('pin'), 'validation_pin_format');
+                return;
+            }
+            
+            // Activar estado de carga
+            window.Notifications.toggleFormLoading(registerForm, true, 'Creando cuenta...');
             
             try {
                 const formData = {
@@ -169,16 +233,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
                 
                 if (!response.ok) {
-                    throw new Error(data.error || 'Error en el registro');
+                    // Usar mensaje personalizado en lugar del error de API
+                    throw new Error(window.Notifications.mapApiErrorToFrontend(data.error));
                 }
                 
-                showNotification('Éxito', 'Registro exitoso. Por favor, revisa tu correo para confirmar tu cuenta.');
+                // Mostrar notificación de éxito
+                window.Notifications.showSuccess('auth_register_success');
+                
+                // Redireccionar después de un breve retraso
                 setTimeout(() => {
                     window.location.href = 'login.html';
                 }, 2000);
             } catch (error) {
                 console.error('Error en registro:', error);
-                showNotification('Error', error.message, true);
+                
+                // Desactivar estado de carga
+                window.Notifications.toggleFormLoading(registerForm, false);
+                
+                // Mostrar error
+                if (error.message && window.Notifications.errorMessages[error.message]) {
+                    window.Notifications.showError(error.message);
+                } else {
+                    window.Notifications.showError('unknown_error');
+                }
             }
         });
     }
@@ -186,8 +263,64 @@ document.addEventListener('DOMContentLoaded', function() {
     // Formulario de login
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
+        // Validación en tiempo real
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        
+        // Validación de email en tiempo real
+        if (emailInput) {
+            emailInput.addEventListener('blur', function() {
+                if (this.value.trim() === '') {
+                    window.Notifications.showFieldError(this, 'validation_required');
+                } else if (!window.Notifications.validateEmail(this.value)) {
+                    window.Notifications.showFieldError(this, 'validation_email');
+                } else {
+                    window.Notifications.clearFieldError(this);
+                }
+            });
+        }
+        
+        // Validación de contraseña en tiempo real
+        if (passwordInput) {
+            passwordInput.addEventListener('blur', function() {
+                if (this.value.trim() === '') {
+                    window.Notifications.showFieldError(this, 'validation_required');
+                } else {
+                    window.Notifications.clearFieldError(this);
+                }
+            });
+        }
+        
+        // Evento de envío del formulario
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            // Obtener elementos del formulario
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            
+            // Validar formulario
+            let hasErrors = false;
+            
+            if (email.value.trim() === '') {
+                window.Notifications.showFieldError(email, 'validation_required');
+                hasErrors = true;
+            } else if (!window.Notifications.validateEmail(email.value)) {
+                window.Notifications.showFieldError(email, 'validation_email');
+                hasErrors = true;
+            }
+            
+            if (password.value.trim() === '') {
+                window.Notifications.showFieldError(password, 'validation_required');
+                hasErrors = true;
+            }
+            
+            if (hasErrors) {
+                return;
+            }
+            
+            // Activar estado de carga
+            window.Notifications.toggleFormLoading(loginForm, true, 'Iniciando sesión...');
             
             try {
                 const username = document.getElementById('email').value;
@@ -209,15 +342,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
                 
                 if (!response.ok) {
-                    throw new Error(data.error || 'Error en el inicio de sesión');
+                    // Usar mensaje personalizado en lugar del error de API
+                    throw new Error(window.Notifications.mapApiErrorToFrontend(data.error));
                 }
                 
-                // Obtener información del usuario decodificando el token (solo front-end)
+                // Obtener información del usuario decodificando el token
                 const token = data.token;
                 const payload = JSON.parse(atob(token.split('.')[1]));
                 
-                // Obtener el PIN del usuario y guardarlo en localStorage para verificación futura
-                // Hacemos una petición adicional para obtener el PIN del usuario
+                // Obtener el PIN del usuario y guardarlo en localStorage
                 try {
                     const userResponse = await fetch(`${API_URL}/users?id=${payload.id}`, {
                         method: 'GET',
@@ -233,28 +366,38 @@ document.addEventListener('DOMContentLoaded', function() {
                             // Guardar el PIN del administrador
                             localStorage.setItem('adminPin', userData.pin);
                         } else {
-                            // Si no podemos obtener el PIN del usuario desde el servidor,
-                            // usamos el PIN introducido en el registro como respaldo
-                            localStorage.setItem('adminPin', '123456'); // PIN por defecto
-                            console.warn('No se pudo obtener el PIN del administrador, usando PIN por defecto');
+                            // PIN por defecto como respaldo
+                            localStorage.setItem('adminPin', '123456');
+                            console.warn('No se pudo obtener el PIN, usando PIN por defecto');
                         }
                     }
                 } catch (pinError) {
-                    console.error('Error al obtener el PIN del administrador:', pinError);
-                    // Como no pudimos obtener el PIN del usuario, usamos el PIN por defecto
+                    console.error('Error al obtener el PIN:', pinError);
                     localStorage.setItem('adminPin', '123456');
                 }
                 
-                // Guardar datos simplificados
+                // Guardar datos
                 saveAuthData(payload, token);
                 
-                showNotification('Éxito', 'Inicio de sesión exitoso');
+                // Mostrar notificación de éxito
+                window.Notifications.showSuccess('auth_login_success', '¡Bienvenido!');
+                
+                // Redireccionar después de un breve retraso
                 setTimeout(() => {
                     window.location.href = 'profileSelection.html';
                 }, 1000);
             } catch (error) {
                 console.error('Error en login:', error);
-                showNotification('Error', error.message, true);
+                
+                // Desactivar estado de carga
+                window.Notifications.toggleFormLoading(loginForm, false);
+                
+                // Mostrar error
+                if (error.message && window.Notifications.errorMessages[error.message]) {
+                    window.Notifications.showError(error.message);
+                } else {
+                    window.Notifications.showError('auth_invalid_credentials');
+                }
             }
         });
     }

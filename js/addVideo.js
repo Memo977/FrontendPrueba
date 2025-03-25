@@ -15,9 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const videoPreview = document.getElementById('videoPreview');
     const previewBtn = document.getElementById('previewBtn');
     const cancelBtn = document.getElementById('cancelBtn');
-    const notification = document.getElementById('notification');
-    const notificationTitle = document.getElementById('notificationTitle');
-    const notificationMessage = document.getElementById('notificationMessage');
     
     // Referencias para el nombre del usuario en la navbar
     const userDisplayName = document.getElementById('userDisplayName');
@@ -40,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const playlistId = urlParams.get('playlistId');
         
         if (!playlistId) {
-            showNotification('Error', 'No se especificó una playlist', 'error');
+            window.Notifications.showError('playlist_not_found', 'Playlist no identificada');
             setTimeout(() => {
                 window.location.href = 'dashboard.html';
             }, 2000);
@@ -71,6 +68,25 @@ document.addEventListener('DOMContentLoaded', function() {
      * Configura los event listeners
      */
     function setupEventListeners() {
+        // Validación de campos en tiempo real
+        videoNameInput.addEventListener('blur', function() {
+            if (this.value.trim() === '') {
+                window.Notifications.showFieldError(this, 'validation_required');
+            } else {
+                window.Notifications.clearFieldError(this);
+            }
+        });
+        
+        youtubeUrlInput.addEventListener('blur', function() {
+            if (this.value.trim() === '') {
+                window.Notifications.showFieldError(this, 'validation_required');
+            } else if (!window.Notifications.validateYouTubeUrl(this.value)) {
+                window.Notifications.showFieldError(this, 'validation_youtube_url');
+            } else {
+                window.Notifications.clearFieldError(this);
+            }
+        });
+        
         // Vista previa del video
         previewBtn.addEventListener('click', handlePreview);
         
@@ -118,7 +134,10 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                showNotification('Error', 'No se ha iniciado sesión', 'error');
+                window.Notifications.showError('auth_not_authenticated');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
                 return;
             }
             
@@ -141,7 +160,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
         } catch (error) {
             console.error('Error:', error);
-            showNotification('Error', 'No se pudo cargar la información de la playlist', 'error');
+            window.Notifications.showError('playlist_not_found', 'Playlist no encontrada');
+            
+            // Añadir botón para volver al dashboard
+            playlistNameBadge.innerHTML = `
+                <span class="badge bg-danger">Error: Playlist no encontrada</span>
+            `;
         }
     }
     
@@ -152,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const youtubeUrl = youtubeUrlInput.value.trim();
         
         if (!youtubeUrl) {
-            showNotification('Error', 'Ingresa una URL de YouTube', 'error');
+            window.Notifications.showFieldError(youtubeUrlInput, 'validation_required');
             return;
         }
         
@@ -160,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const videoId = extractYouTubeId(youtubeUrl);
         
         if (!videoId) {
-            showNotification('Error', 'URL de YouTube inválida', 'error');
+            window.Notifications.showFieldError(youtubeUrlInput, 'validation_youtube_url');
             return;
         }
         
@@ -177,6 +201,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Mostrar el contenedor de vista previa
         videoPreviewContainer.style.display = 'block';
+        
+        // Limpiar cualquier error en la URL
+        window.Notifications.clearFieldError(youtubeUrlInput);
     }
     
     /**
@@ -203,6 +230,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // Activar estado de carga
+        window.Notifications.toggleFormLoading(addVideoForm, true, 'Añadiendo video...');
+        
         // Obtener los valores del formulario
         const videoName = videoNameInput.value.trim();
         const youtubeUrl = youtubeUrlInput.value.trim();
@@ -214,16 +244,22 @@ document.addEventListener('DOMContentLoaded', function() {
             const videoData = await addVideoToPlaylist(videoName, youtubeUrl, description, playlistId);
             
             if (videoData && videoData._id) {
-                showNotification('Éxito', 'Video añadido correctamente', 'success');
+                // Mostrar mensaje de éxito
+                window.Notifications.showSuccess('video_add_success');
                 
-                // Redireccionar a la página de edición de playlist después de 1.5 segundos
+                // Redireccionar a la página de edición de playlist después de un breve retraso
                 setTimeout(() => {
                     window.location.href = `editPlaylist.html?id=${playlistId}`;
                 }, 1500);
             }
         } catch (error) {
             console.error('Error:', error);
-            showNotification('Error', 'No se pudo añadir el video', 'error');
+            
+            // Desactivar estado de carga
+            window.Notifications.toggleFormLoading(addVideoForm, false);
+            
+            // Mostrar mensaje de error
+            window.Notifications.showError('video_create_failed');
         }
     }
     
@@ -232,29 +268,28 @@ document.addEventListener('DOMContentLoaded', function() {
      * @returns {boolean} - True si el formulario es válido, false en caso contrario
      */
     function validateForm() {
+        let isValid = true;
+        
         // Validar nombre del video
         if (videoNameInput.value.trim() === '') {
-            showNotification('Error', 'El nombre del video es obligatorio', 'error');
-            videoNameInput.focus();
-            return false;
+            window.Notifications.showFieldError(videoNameInput, 'validation_required');
+            isValid = false;
         }
         
         // Validar URL de YouTube
         const youtubeUrl = youtubeUrlInput.value.trim();
         if (!youtubeUrl) {
-            showNotification('Error', 'La URL de YouTube es obligatoria', 'error');
-            youtubeUrlInput.focus();
-            return false;
+            window.Notifications.showFieldError(youtubeUrlInput, 'validation_required');
+            isValid = false;
+        } else {
+            const videoId = extractYouTubeId(youtubeUrl);
+            if (!videoId) {
+                window.Notifications.showFieldError(youtubeUrlInput, 'validation_youtube_url');
+                isValid = false;
+            }
         }
         
-        const videoId = extractYouTubeId(youtubeUrl);
-        if (!videoId) {
-            showNotification('Error', 'URL de YouTube inválida', 'error');
-            youtubeUrlInput.focus();
-            return false;
-        }
-        
-        return true;
+        return isValid;
     }
     
     /**
@@ -294,27 +329,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     /**
-     * Muestra una notificación al usuario
-     * @param {string} title - Título de la notificación
-     * @param {string} message - Mensaje de la notificación
-     * @param {string} type - Tipo de notificación (success, error, info)
-     */
-    function showNotification(title, message, type = 'info') {
-        notificationTitle.textContent = title;
-        notificationMessage.textContent = message;
-        
-        // Aplicar clases según el tipo de notificación
-        notification.classList.remove('bg-success', 'bg-danger', 'bg-info');
-        notification.classList.add(type === 'success' ? 'bg-success' : 
-                                  type === 'error' ? 'bg-danger' : 
-                                  'bg-info');
-        
-        // Mostrar la notificación
-        const toast = new bootstrap.Toast(notification);
-        toast.show();
-    }
-    
-    /**
      * Maneja el cierre de sesión
      */
     async function handleLogout() {
@@ -332,20 +346,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            if (response.ok) {
-                // Limpiar localStorage
-                localStorage.removeItem('token');
-                localStorage.removeItem('adminId');
-                localStorage.removeItem('userName');
-                
-                // Redireccionar a la página de login
+            // Siempre limpiar localStorage y redirigir, sin importar la respuesta del API
+            localStorage.removeItem('token');
+            localStorage.removeItem('adminId');
+            localStorage.removeItem('userName');
+            
+            // Mostrar mensaje de éxito
+            window.Notifications.showSuccess('auth_logout_success', 'Sesión cerrada');
+            
+            // Redireccionar después de un breve retraso
+            setTimeout(() => {
                 window.location.href = 'login.html';
-            } else {
-                showNotification('Error', 'No se pudo cerrar sesión', 'error');
-            }
+            }, 1000);
         } catch (error) {
             console.error('Error:', error);
-            showNotification('Error', 'No se pudo cerrar sesión', 'error');
+            
+            // Incluso si hay error, limpiamos el almacenamiento y redirigimos
+            localStorage.removeItem('token');
+            localStorage.removeItem('adminId');
+            localStorage.removeItem('userName');
+            window.location.href = 'login.html';
         }
     }
 });

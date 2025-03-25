@@ -20,7 +20,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedProfile = null;
     let enteredPin = '';
     let maxPinLength = 6;
-    let pinPurpose = ''; // Nueva variable para controlar el propósito del PIN (perfil, admin, nuevo perfil)
+    let pinPurpose = ''; // Variable para controlar el propósito del PIN (perfil, admin)
+    let pinAttempts = 0; // Contador de intentos fallidos
+    const maxPinAttempts = 3; // Máximo de intentos permitidos
     
     // Inicialización
     init();
@@ -32,8 +34,25 @@ document.addEventListener('DOMContentLoaded', function() {
         // Verificar si hay sesión de administrador
         const token = localStorage.getItem('token');
         if (!token) {
-            // Si no hay sesión, redirigir al login
-            window.location.href = 'login.html';
+            // Mostrar mensaje de error en lugar de redireccionar inmediatamente
+            profilesContainer.innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-danger text-center">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Sesión expirada o no iniciada
+                        <div class="mt-3">
+                            <a href="login.html" class="btn btn-primary">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Ocultar botones de navegación
+            if (switchAccountBtn) switchAccountBtn.style.display = 'none';
+            if (adminNavBtn) adminNavBtn.style.display = 'none';
+            
             return;
         }
         
@@ -50,7 +69,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function setupEventListeners() {
         // Evento para el botón de cambiar cuenta
         switchAccountBtn.addEventListener('click', function() {
-            handleLogout();
+            // Mostrar confirmación antes de cerrar sesión
+            if (confirm('¿Estás seguro de que quieres cambiar de cuenta? Se cerrará tu sesión actual.')) {
+                handleLogout();
+            }
         });
         
         // Evento para el botón de administrador en la navbar
@@ -80,6 +102,24 @@ document.addEventListener('DOMContentLoaded', function() {
         // Añadir evento para cerrar el modal y reiniciar el PIN
         pinModal.addEventListener('hidden.bs.modal', function() {
             resetPin();
+            pinAttempts = 0; // Reiniciar contador de intentos
+        });
+        
+        // Añadir soporte para teclado físico en el modal PIN
+        document.addEventListener('keydown', function(e) {
+            // Solo procesar eventos de teclado cuando el modal está visible
+            if (!pinModal.classList.contains('show')) return;
+            
+            if (/^[0-9]$/.test(e.key)) {
+                // Si es un dígito (0-9)
+                handlePinDigit(e.key);
+            } else if (e.key === 'Backspace' || e.key === 'Delete') {
+                // Si es borrar
+                handlePinClear();
+            } else if (e.key === 'Enter') {
+                // Si es Enter
+                handlePinSubmit();
+            }
         });
     }
     
@@ -89,6 +129,16 @@ document.addEventListener('DOMContentLoaded', function() {
     async function loadProfiles() {
         try {
             const token = localStorage.getItem('token');
+            
+            // Mostrar indicador de carga
+            profilesContainer.innerHTML = `
+                <div class="col-12 text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando perfiles...</span>
+                    </div>
+                    <p class="mt-3">Cargando perfiles...</p>
+                </div>
+            `;
             
             const response = await fetch('http://localhost:3000/api/admin/restricted_users', {
                 method: 'GET',
@@ -107,15 +157,18 @@ document.addEventListener('DOMContentLoaded', function() {
             renderProfiles(profiles);
         } catch (error) {
             console.error('Error:', error);
+            
+            // Mostrar mensaje de error
             profilesContainer.innerHTML = `
                 <div class="col-12">
-                    <div class="text-center py-5">
-                        <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
-                        <h3 class="mt-3">Error al cargar perfiles</h3>
-                        <p class="text-muted">No se pudieron cargar los perfiles infantiles.</p>
-                        <button class="btn btn-primary mt-3" onclick="window.location.reload()">
-                            <i class="bi bi-arrow-clockwise"></i> Reintentar
-                        </button>
+                    <div class="alert alert-danger text-center">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Error al cargar perfiles
+                        <div class="mt-3">
+                            <button class="btn btn-outline-danger" onclick="window.location.reload()">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Reintentar
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -129,14 +182,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderProfiles(profiles) {
         profilesContainer.innerHTML = '';
         
-        // Si no hay perfiles, mostrar un mensaje
+        // Si no hay perfiles, mostrar un mensaje y un botón para crear
         if (profiles.length === 0) {
             profilesContainer.innerHTML = `
                 <div class="col-12">
-                    <div class="text-center py-5">
-                        <i class="bi bi-person-plus" style="font-size: 3rem; color: #6c757d;"></i>
-                        <h3 class="mt-3">No hay perfiles infantiles</h3>
-                        <p class="text-muted">No hay perfiles disponibles.</p>
+                    <div class="alert alert-info text-center">
+                        <i class="bi bi-people me-2"></i>
+                        No hay perfiles infantiles
+                        <div class="mt-3">
+                            <a href="createProfile.html" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-2"></i>Crear primer perfil
+                            </a>
+                        </div>
                     </div>
                 </div>
             `;
@@ -259,6 +316,19 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // Verificar si se excedió el límite de intentos
+        if (pinAttempts >= maxPinAttempts) {
+            showPinError('Demasiados intentos fallidos. Por favor, intenta más tarde.');
+            
+            // Cerrar el modal después de un breve retraso
+            setTimeout(() => {
+                const modalInstance = bootstrap.Modal.getInstance(pinModal);
+                modalInstance.hide();
+            }, 2000);
+            
+            return;
+        }
+        
         // Lógica según el propósito del PIN
         if (pinPurpose === 'profile') {
             // Verificar PIN de perfil infantil
@@ -280,6 +350,19 @@ document.addEventListener('DOMContentLoaded', function() {
         
         console.log('Verificando PIN para perfil:', selectedProfile.full_name);
         
+        // Deshabilitar botones durante la verificación
+        togglePinpadButtons(true);
+        
+        // Mostrar indicador de carga
+        profileNameInModal.innerHTML = `
+            <div class="d-flex align-items-center">
+                <span class="me-2">${selectedProfile.full_name}</span>
+                <div class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden">Verificando...</span>
+                </div>
+            </div>
+        `;
+        
         // Verificar el PIN
         try {
             const token = localStorage.getItem('token');
@@ -298,6 +381,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             console.log('Respuesta de verificación PIN:', response.status, response.statusText);
+            
+            // Habilitar botones después de la verificación
+            togglePinpadButtons(false);
+            
+            // Restaurar nombre del perfil
+            profileNameInModal.textContent = selectedProfile.full_name;
             
             if (response.ok) {
                 // PIN correcto, guardar información del perfil
@@ -326,13 +415,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 const errorText = await response.text();
                 console.error('Detalles del error:', errorText);
                 
+                // Incrementar contador de intentos
+                pinAttempts++;
+                
                 // PIN incorrecto, mostrar error
                 showPinError();
             }
         } catch (error) {
             console.error('Error al verificar PIN:', error);
-            showPinError();
+            
+            // Habilitar botones después de la verificación
+            togglePinpadButtons(false);
+            
+            // Restaurar nombre del perfil
+            profileNameInModal.textContent = selectedProfile.full_name;
+            
+            // Incrementar contador de intentos
+            pinAttempts++;
+            
+            // Mostrar error
+            showPinError('Error al verificar el PIN. Intenta de nuevo.');
         }
+    }
+    
+    /**
+     * Alterna la habilitación de los botones del teclado numérico
+     * @param {boolean} disabled - True para deshabilitar, false para habilitar
+     */
+    function togglePinpadButtons(disabled) {
+        pinButtons.forEach(button => {
+            button.disabled = disabled;
+            if (disabled) {
+                button.classList.add('disabled');
+            } else {
+                button.classList.remove('disabled');
+            }
+        });
     }
     
     /**
@@ -358,6 +476,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Redireccionar al panel de administración
             window.location.href = 'dashboard.html';
         } else {
+            // Incrementar contador de intentos
+            pinAttempts++;
+            
             // PIN incorrecto
             showPinError();
         }
@@ -372,10 +493,15 @@ document.addEventListener('DOMContentLoaded', function() {
         enteredPin = '';
         updatePinCircles();
         
-        // Actualizar mensaje de error si se proporciona uno personalizado
-        if (message) {
-            pinError.textContent = message;
+        // Construir mensaje dependiendo del número de intentos
+        let errorMessage = message;
+        if (pinAttempts > 0 && pinAttempts < maxPinAttempts) {
+            let intentosRestantes = maxPinAttempts - pinAttempts;
+            errorMessage += ` (${intentosRestantes} ${intentosRestantes === 1 ? 'intento restante' : 'intentos restantes'})`;
         }
+        
+        // Actualizar mensaje de error
+        pinError.textContent = errorMessage;
         
         // Mostrar mensaje de error
         pinError.style.display = 'inline-block';
@@ -407,6 +533,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
+            // Mostrar indicador de carga
+            switchAccountBtn.innerHTML = `
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Cerrando sesión...
+            `;
+            switchAccountBtn.disabled = true;
+            
             const response = await fetch('http://localhost:3000/api/session', {
                 method: 'DELETE',
                 headers: {
@@ -414,22 +547,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            if (response.ok) {
-                // Limpiar localStorage
-                localStorage.removeItem('token');
-                localStorage.removeItem('adminId');
-                localStorage.removeItem('userName');
-                localStorage.removeItem('currentProfile');
-                localStorage.removeItem('adminPin');
-                
-                // Redireccionar a la página de login
-                window.location.href = 'login.html';
-            } else {
-                alert('Error al cerrar sesión. Intente nuevamente.');
-            }
+            // Limpiar localStorage independientemente de la respuesta
+            localStorage.removeItem('token');
+            localStorage.removeItem('adminId');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('currentProfile');
+            localStorage.removeItem('adminPin');
+            
+            // Redirigir a la página de login
+            window.location.href = 'login.html';
         } catch (error) {
             console.error('Error:', error);
-            alert('Error al cerrar sesión. Intente nuevamente.');
+            
+            // Incluso si hay error, limpiar localStorage y redireccionar
+            localStorage.removeItem('token');
+            localStorage.removeItem('adminId');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('currentProfile');
+            localStorage.removeItem('adminPin');
+            
+            window.location.href = 'login.html';
         }
     }
 });

@@ -389,6 +389,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         try {
+            const token = localStorage.getItem('token');
             // Mostrar sección de resultados con indicador de carga
             searchResultsSection.style.display = 'block';
             searchResults.innerHTML = `
@@ -404,7 +405,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await fetch(`http://localhost:3000/api/restricted/videos?search=${encodeURIComponent(searchTerm)}`, {
                 method: 'GET',
                 headers: {
-                    'x-restricted-pin': currentProfile.pin
+                    'x-restricted-pin': currentProfile.pin,
+                    'Authorization': `Bearer ${token}`
                 }
             });
             

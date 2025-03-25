@@ -16,9 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const videosList = document.getElementById('videosList');
     const noVideosMessage = document.getElementById('noVideosMessage');
     const addVideoBtn = document.getElementById('addVideoBtn');
-    const notification = document.getElementById('notification');
-    const notificationTitle = document.getElementById('notificationTitle');
-    const notificationMessage = document.getElementById('notificationMessage');
     
     // Modales
     const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
@@ -51,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const playlistId = urlParams.get('id');
         
         if (!playlistId) {
-            showNotification('Error', 'No se especificó una playlist', 'error');
+            window.Notifications.showError('playlist_not_found');
             setTimeout(() => {
                 window.location.href = 'dashboard.html';
             }, 2000);
@@ -85,6 +82,15 @@ document.addEventListener('DOMContentLoaded', function() {
      * Configura los event listeners
      */
     function setupEventListeners() {
+        // Validación de campos en tiempo real
+        playlistNameInput.addEventListener('blur', function() {
+            if (this.value.trim() === '') {
+                window.Notifications.showFieldError(this, 'validation_required');
+            } else {
+                window.Notifications.clearFieldError(this);
+            }
+        });
+        
         // Envío del formulario
         editPlaylistForm.addEventListener('submit', handleFormSubmit);
         
@@ -134,7 +140,10 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                showNotification('Error', 'No se ha iniciado sesión', 'error');
+                window.Notifications.showError('auth_not_authenticated');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
                 return;
             }
             
@@ -166,10 +175,26 @@ document.addEventListener('DOMContentLoaded', function() {
             editPlaylistForm.style.display = 'block';
         } catch (error) {
             console.error('Error:', error);
-            showNotification('Error', 'No se pudieron cargar los datos de la playlist', 'error');
+            window.Notifications.showError('playlist_not_found');
             
             // Ocultar indicador de carga y mostrar mensaje de error
             loadingIndicator.style.display = 'none';
+            
+            // Mostrar botón para volver al dashboard
+            const formContainer = document.querySelector('.card-body');
+            if (formContainer) {
+                formContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        No se encontró la playlist solicitada o hubo un error al cargar los datos.
+                    </div>
+                    <div class="text-center">
+                        <a href="dashboard.html" class="btn btn-primary">
+                            <i class="bi bi-arrow-left me-2"></i>Volver al Dashboard
+                        </a>
+                    </div>
+                `;
+            }
         }
     }
     
@@ -189,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                showNotification('Error', 'No se ha iniciado sesión', 'error');
+                window.Notifications.showError('auth_not_authenticated');
                 return;
             }
             
@@ -213,10 +238,31 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 noProfilesMessage.style.display = 'block';
                 profileCheckboxes.innerHTML = '';
+                
+                // Mostrar mensaje con enlace para crear perfil
+                profileCheckboxes.innerHTML = `
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        No hay perfiles infantiles disponibles. 
+                        <a href="createProfile.html" class="alert-link">Crea un perfil primero</a>.
+                    </div>
+                `;
             }
         } catch (error) {
             console.error('Error:', error);
-            showNotification('Error', 'No se pudieron cargar los perfiles infantiles', 'error');
+            window.Notifications.showError('server_error');
+            
+            // Mostrar mensaje de error en el contenedor de perfiles
+            noProfilesMessage.style.display = 'none';
+            profileCheckboxes.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Error al cargar los perfiles. 
+                    <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="window.location.reload()">
+                        Reintentar
+                    </button>
+                </div>
+            `;
         }
     }
     
@@ -258,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                showNotification('Error', 'No se ha iniciado sesión', 'error');
+                window.Notifications.showError('auth_not_authenticated');
                 return;
             }
             
@@ -282,10 +328,31 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 noVideosMessage.style.display = 'block';
                 videosList.innerHTML = '';
+                
+                // Mostrar mensaje animado de playlist vacía
+                noVideosMessage.innerHTML = `
+                    <div class="text-center">
+                        <i class="bi bi-collection-play text-muted" style="font-size: 3rem;"></i>
+                        <p class="mt-3">No hay videos en esta playlist.</p>
+                        <p class="text-muted">¡Añade videos para que los niños puedan disfrutarlos!</p>
+                    </div>
+                `;
             }
         } catch (error) {
             console.error('Error:', error);
-            showNotification('Error', 'No se pudieron cargar los videos', 'error');
+            window.Notifications.showError('server_error');
+            
+            // Mostrar mensaje de error en el contenedor de videos
+            noVideosMessage.style.display = 'none';
+            videosList.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Error al cargar los videos. 
+                    <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="window.location.reload()">
+                        Reintentar
+                    </button>
+                </div>
+            `;
         }
     }
     
@@ -373,6 +440,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // Activar estado de carga
+        window.Notifications.toggleFormLoading(editPlaylistForm, true, 'Actualizando playlist...');
+        
         // Obtener los valores del formulario
         const playlistId = playlistIdInput.value;
         const playlistName = playlistNameInput.value.trim();
@@ -387,15 +457,21 @@ document.addEventListener('DOMContentLoaded', function() {
             // Actualizar la playlist
             await updatePlaylist(playlistId, playlistName, selectedProfiles);
             
-            showNotification('Éxito', 'Playlist actualizada correctamente', 'success');
+            // Mostrar mensaje de éxito
+            window.Notifications.showSuccess('playlist_update_success');
             
-            // Redireccionar al dashboard después de 1.5 segundos
+            // Redireccionar al dashboard después de un breve retraso
             setTimeout(() => {
                 window.location.href = 'dashboard.html';
             }, 1500);
         } catch (error) {
             console.error('Error:', error);
-            showNotification('Error', 'No se pudo actualizar la playlist', 'error');
+            
+            // Desactivar estado de carga
+            window.Notifications.toggleFormLoading(editPlaylistForm, false);
+            
+            // Mostrar mensaje de error
+            window.Notifications.showError('playlist_update_failed');
         }
     }
     
@@ -404,14 +480,15 @@ document.addEventListener('DOMContentLoaded', function() {
      * @returns {boolean} - True si el formulario es válido, false en caso contrario
      */
     function validateForm() {
+        let isValid = true;
+        
         // Validar nombre de la playlist
         if (playlistNameInput.value.trim() === '') {
-            showNotification('Error', 'El nombre de la playlist es obligatorio', 'error');
-            playlistNameInput.focus();
-            return false;
+            window.Notifications.showFieldError(playlistNameInput, 'validation_required');
+            isValid = false;
         }
         
-        return true;
+        return isValid;
     }
     
     /**
@@ -460,6 +537,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error('No se ha iniciado sesión');
             }
             
+            // Mostrar estado de carga en el botón
+            confirmDeleteVideoBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Eliminando...`;
+            confirmDeleteVideoBtn.disabled = true;
+            
             const response = await fetch(`http://localhost:3000/api/admin/videos?id=${currentVideoToDelete}`, {
                 method: 'DELETE',
                 headers: {
@@ -476,18 +557,25 @@ document.addEventListener('DOMContentLoaded', function() {
             const modal = bootstrap.Modal.getInstance(modalEl);
             modal.hide();
             
-            showNotification('Éxito', 'Video eliminado correctamente', 'success');
+            // Mostrar mensaje de éxito
+            window.Notifications.showSuccess('video_delete_success');
             
             // Recargar los videos de la playlist
             await loadVideos(playlistIdInput.value);
         } catch (error) {
             console.error('Error:', error);
-            showNotification('Error', 'No se pudo eliminar el video', 'error');
+            
+            // Restaurar el estado del botón
+            confirmDeleteVideoBtn.innerHTML = `Eliminar video`;
+            confirmDeleteVideoBtn.disabled = false;
             
             // Cerrar el modal
             const modalEl = document.getElementById('deleteVideoModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
             modal.hide();
+            
+            // Mostrar mensaje de error
+            window.Notifications.showError('video_delete_failed');
         } finally {
             // Limpiar referencia al video a eliminar
             currentVideoToDelete = null;
@@ -506,6 +594,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error('No se puede eliminar la playlist');
             }
             
+            // Mostrar estado de carga en el botón
+            confirmDeleteBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Eliminando...`;
+            confirmDeleteBtn.disabled = true;
+            
             const response = await fetch(`http://localhost:3000/api/admin/playlists?id=${playlistId}`, {
                 method: 'DELETE',
                 headers: {
@@ -522,42 +614,28 @@ document.addEventListener('DOMContentLoaded', function() {
             const modal = bootstrap.Modal.getInstance(modalEl);
             modal.hide();
             
-            showNotification('Éxito', 'Playlist eliminada correctamente', 'success');
+            // Mostrar mensaje de éxito
+            window.Notifications.showSuccess('playlist_delete_success');
             
-            // Redireccionar al dashboard después de 1.5 segundos
+            // Redireccionar al dashboard después de un breve retraso
             setTimeout(() => {
                 window.location.href = 'dashboard.html';
             }, 1500);
         } catch (error) {
             console.error('Error:', error);
-            showNotification('Error', 'No se pudo eliminar la playlist', 'error');
+            
+            // Restaurar el estado del botón
+            confirmDeleteBtn.innerHTML = `Eliminar playlist`;
+            confirmDeleteBtn.disabled = false;
             
             // Cerrar el modal
             const modalEl = document.getElementById('deleteConfirmationModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
             modal.hide();
+            
+            // Mostrar mensaje de error
+            window.Notifications.showError('playlist_delete_failed');
         }
-    }
-    
-    /**
-     * Muestra una notificación al usuario
-     * @param {string} title - Título de la notificación
-     * @param {string} message - Mensaje de la notificación
-     * @param {string} type - Tipo de notificación (success, error, info)
-     */
-    function showNotification(title, message, type = 'info') {
-        notificationTitle.textContent = title;
-        notificationMessage.textContent = message;
-        
-        // Aplicar clases según el tipo de notificación
-        notification.classList.remove('bg-success', 'bg-danger', 'bg-info');
-        notification.classList.add(type === 'success' ? 'bg-success' : 
-                                  type === 'error' ? 'bg-danger' : 
-                                  'bg-info');
-        
-        // Mostrar la notificación
-        const toast = new bootstrap.Toast(notification);
-        toast.show();
     }
     
     /**
@@ -578,20 +656,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            if (response.ok) {
-                // Limpiar localStorage
-                localStorage.removeItem('token');
-                localStorage.removeItem('adminId');
-                localStorage.removeItem('userName');
-                
-                // Redireccionar a la página de login
+            // Siempre limpiar localStorage y redirigir, sin importar la respuesta del API
+            localStorage.removeItem('token');
+            localStorage.removeItem('adminId');
+            localStorage.removeItem('userName');
+            
+            // Mostrar mensaje de éxito
+            window.Notifications.showSuccess('auth_logout_success');
+            
+            // Redireccionar después de un breve retraso
+            setTimeout(() => {
                 window.location.href = 'login.html';
-            } else {
-                showNotification('Error', 'No se pudo cerrar sesión', 'error');
-            }
+            }, 1000);
         } catch (error) {
             console.error('Error:', error);
-            showNotification('Error', 'No se pudo cerrar sesión', 'error');
+            
+            // Incluso si hay error, limpiamos el almacenamiento y redirigimos
+            localStorage.removeItem('token');
+            localStorage.removeItem('adminId');
+            localStorage.removeItem('userName');
+            window.location.href = 'login.html';
         }
     }
 });
