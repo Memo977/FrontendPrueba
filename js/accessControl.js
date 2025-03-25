@@ -1,15 +1,7 @@
-/**
- * accessControl.js
- * Script para proteger las páginas que requieren autenticación
- * Se ejecuta inmediatamente sin esperar a DOMContentLoaded
- */
-
 // Lista de páginas públicas que no requieren autenticación
 const publicPages = [
     'login.html',
     'signup.html',
-    'profileSelection.html',
-    'kidsDashboard.html'
 ];
 
 // Lista de páginas de administrador que requieren PIN adicional

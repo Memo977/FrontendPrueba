@@ -1,8 +1,3 @@
-/**
- * createPlaylist.js
- * Script para la creación de playlists en KidsTube
- */
-
 document.addEventListener('DOMContentLoaded', function() {
     // Referencias a elementos del DOM
     const createPlaylistForm = document.getElementById('createPlaylistForm');
@@ -65,14 +60,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (logoutButton) {
             logoutButton.addEventListener('click', handleLogout);
         }
-        
-        // Event listener para el botón de editar perfil de usuario
-        const editProfileButton = document.querySelector('.editProfileButton');
-        if (editProfileButton) {
-            editProfileButton.addEventListener('click', function() {
-                window.location.href = 'profile.html';
-            });
-        }
     }
     
     /**
@@ -84,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!token) {
                 window.Notifications.showError('auth_not_authenticated');
                 setTimeout(() => {
-                    window.location.href = 'login.html';
+                    window.location.href = '../shared/login.html';
                 }, 2000);
                 return;
             }
@@ -266,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                window.location.href = 'login.html';
+                window.location.href = '../shared/login.html';
                 return;
             }
             
@@ -287,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Redireccionar después de un breve retraso
             setTimeout(() => {
-                window.location.href = 'login.html';
+                window.location.href = '../shared/login.html';
             }, 1000);
         } catch (error) {
             console.error('Error:', error);
@@ -296,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.removeItem('token');
             localStorage.removeItem('adminId');
             localStorage.removeItem('userName');
-            window.location.href = 'login.html';
+            window.location.href = '../shared/login.html';
         }
     }
 });

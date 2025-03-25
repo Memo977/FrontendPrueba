@@ -1,7 +1,3 @@
-/**
- * admin.js - Maneja la funcionalidad del dashboard de administrador
- */
-
 // Configuración de la API
 const API_URL = 'http://localhost:3000/api';
 
@@ -487,15 +483,6 @@ function initEvents() {
     if (logoutButton) {
         logoutButton.addEventListener('click', logout);
     }
-    
-    // Evento para el botón de editar perfil
-    const editProfileButtons = document.querySelectorAll('.editProfileButton');
-    editProfileButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Redirigir a la página de edición de perfil
-            window.location.href = 'profile.html';
-        });
-    });
 }
 
 /**
@@ -534,7 +521,7 @@ async function logout() {
     console.log('Datos de autenticación eliminados del localStorage');
     
     // Redirigir a la página de selección de perfiles
-    window.location.href = 'login.html';
+    window.location.href = '../shared/login.html';
 }
 
 /**

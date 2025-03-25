@@ -384,7 +384,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Redireccionar después de un breve retraso
                 setTimeout(() => {
-                    window.location.href = 'profileSelection.html';
+                    window.location.href = '../users/profileSelection.html';
                 }, 1000);
             } catch (error) {
                 console.error('Error en login:', error);
@@ -401,12 +401,4 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
-    // Botones de editar perfil de usuario
-    const editProfileButtons = document.querySelectorAll('.editProfileButton');
-    editProfileButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            window.location.href = 'profile.html';
-        });
-    });
 });

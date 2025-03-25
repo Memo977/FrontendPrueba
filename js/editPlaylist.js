@@ -1,8 +1,3 @@
-/**
- * editPlaylist.js
- * Script para la edición de playlists en KidsTube
- */
-
 document.addEventListener('DOMContentLoaded', function() {
     // Referencias a elementos del DOM
     const editPlaylistForm = document.getElementById('editPlaylistForm');
@@ -121,14 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const logoutButton = document.getElementById('logoutButton');
         if (logoutButton) {
             logoutButton.addEventListener('click', handleLogout);
-        }
-        
-        // Event listener para el botón de editar perfil de usuario
-        const editProfileButton = document.querySelector('.editProfileButton');
-        if (editProfileButton) {
-            editProfileButton.addEventListener('click', function() {
-                window.location.href = 'profile.html';
-            });
         }
     }
     
@@ -645,7 +632,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                window.location.href = 'login.html';
+                window.location.href = '../shared/login.html';
                 return;
             }
             
@@ -666,7 +653,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Redireccionar después de un breve retraso
             setTimeout(() => {
-                window.location.href = 'login.html';
+                window.location.href = '../shared/login.html';
             }, 1000);
         } catch (error) {
             console.error('Error:', error);
@@ -675,7 +662,7 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.removeItem('token');
             localStorage.removeItem('adminId');
             localStorage.removeItem('userName');
-            window.location.href = 'login.html';
+            window.location.href = '../shared/login.html';
         }
     }
 });

@@ -1,8 +1,3 @@
-/**
- * kidsDashboard.js
- * Script para el dashboard infantil de KidsTube
- */
-
 document.addEventListener('DOMContentLoaded', function() {
     // Referencias a elementos del DOM
     const welcomeTitle = document.getElementById('welcomeTitle');
@@ -313,8 +308,8 @@ document.addEventListener('DOMContentLoaded', function() {
     /**
      * Crea un elemento de tarjeta de video
      * @param {Object} video - Datos del video
-     * @param {string} playlistId - ID de la playlist a la que pertenece el video
-     * @returns {HTMLElement} - Elemento de tarjeta de video
+     * @param {string} playlistId
+     * @returns {HTMLElement}
      */
     function createVideoCard(video, playlistId) {
         // Crear columna para el video

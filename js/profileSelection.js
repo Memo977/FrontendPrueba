@@ -1,8 +1,3 @@
-/**
- * profileSelection.js
- * Script para la selección de perfiles en KidsTube
- */
-
 document.addEventListener('DOMContentLoaded', function() {
     // Referencias a elementos del DOM
     const profilesContainer = document.getElementById('profilesContainer');
@@ -20,9 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedProfile = null;
     let enteredPin = '';
     let maxPinLength = 6;
-    let pinPurpose = ''; // Variable para controlar el propósito del PIN (perfil, admin)
-    let pinAttempts = 0; // Contador de intentos fallidos
-    const maxPinAttempts = 3; // Máximo de intentos permitidos
+    let pinPurpose = ''; 
+    let pinAttempts = 0;
+    const maxPinAttempts = 3;
     
     // Inicialización
     init();
@@ -510,7 +505,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Redireccionar según el propósito
             if (pinPurpose === 'admin') {
                 // Redireccionar al panel de administración
-                window.location.href = 'dashboard.html';
+                window.location.href = '../admin/dashboard.html';
             } else if (pinPurpose === 'admin_redirect') {
                 // Redireccionar a la URL guardada
                 const redirectUrl = sessionStorage.getItem('adminRedirectAfterPin');
@@ -519,11 +514,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = redirectUrl;
                 } else {
                     // Si no hay URL, ir al dashboard por defecto
-                    window.location.href = 'dashboard.html';
+                    window.location.href = '../admin/dashboard.html';
                 }
             } else if (pinPurpose === 'admin_create_profile') {
                 // Redireccionar a la creación de perfil
-                window.location.href = 'createProfile.html';
+                window.location.href = '../admin/createProfile.html';
             }
         } else {
             // Incrementar contador de intentos
@@ -579,7 +574,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                window.location.href = 'login.html';
+                window.location.href = '../shared/login.html';
                 return;
             }
             
@@ -610,7 +605,7 @@ document.addEventListener('DOMContentLoaded', function() {
             sessionStorage.removeItem('adminRedirectAfterPin');
             
             // Redirigir a la página de login
-            window.location.href = 'login.html';
+            window.location.href = '../shared/login.html';
         } catch (error) {
             console.error('Error:', error);
             
@@ -626,7 +621,7 @@ document.addEventListener('DOMContentLoaded', function() {
             sessionStorage.removeItem('adminPinVerifiedTime');
             sessionStorage.removeItem('adminRedirectAfterPin');
             
-            window.location.href = 'login.html';
+            window.location.href = '../shared/login.html';
         }
     }
 });

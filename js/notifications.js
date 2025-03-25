@@ -1,9 +1,3 @@
-/**
- * notifications.js
- * Sistema centralizado para manejar notificaciones en el frontend
- */
-
-// Diccionario de mensajes de error personalizados
 const errorMessages = {
     // Errores de autenticación
     'auth_invalid_credentials': 'El correo electrónico o la contraseña son incorrectos.',
