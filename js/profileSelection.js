@@ -61,6 +61,23 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Configurar event listeners
         setupEventListeners();
+        
+        // Verificar si se necesita verificación de PIN de administrador
+        checkAdminVerification();
+    }
+    
+    /**
+     * Verifica si se requiere verificación de PIN de administrador
+     * basado en parámetros de URL
+     */
+    function checkAdminVerification() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const verifyAdmin = urlParams.get('verifyAdmin');
+        
+        if (verifyAdmin === 'true') {
+            // Mostrar modal de PIN de administrador
+            showAdminPinModal('admin_redirect');
+        }
     }
     
     /**
@@ -190,13 +207,21 @@ document.addEventListener('DOMContentLoaded', function() {
                         <i class="bi bi-people me-2"></i>
                         No hay perfiles infantiles
                         <div class="mt-3">
-                            <a href="createProfile.html" class="btn btn-primary">
+                            <button id="createFirstProfileBtn" class="btn btn-primary">
                                 <i class="bi bi-plus-circle me-2"></i>Crear primer perfil
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
             `;
+            
+            // Agregar evento al botón de crear primer perfil para verificar PIN
+            const createFirstProfileBtn = document.getElementById('createFirstProfileBtn');
+            if (createFirstProfileBtn) {
+                createFirstProfileBtn.addEventListener('click', function() {
+                    showAdminPinModal('admin_create_profile');
+                });
+            }
             
             return;
         }
@@ -244,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     /**
      * Muestra el modal para ingresar el PIN del administrador
-     * @param {string} purpose - Propósito del PIN: 'admin'
+     * @param {string} purpose - Propósito del PIN: 'admin', 'admin_redirect', 'admin_create_profile'
      */
     function showAdminPinModal(purpose) {
         // Guardar el propósito
@@ -333,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (pinPurpose === 'profile') {
             // Verificar PIN de perfil infantil
             await verifyProfilePin();
-        } else if (pinPurpose === 'admin') {
+        } else if (pinPurpose.startsWith('admin')) {
             // Verificar PIN de administrador
             verifyAdminPin();
         }
@@ -473,8 +498,33 @@ document.addEventListener('DOMContentLoaded', function() {
             const modalInstance = bootstrap.Modal.getInstance(pinModal);
             modalInstance.hide();
             
-            // Redireccionar al panel de administración
-            window.location.href = 'dashboard.html';
+            // Registrar la verificación del PIN de administrador
+            if (window.markAdminPinVerified) {
+                window.markAdminPinVerified();
+            } else {
+                // Fallback si la función no está disponible
+                sessionStorage.setItem('adminPinVerified', 'true');
+                sessionStorage.setItem('adminPinVerifiedTime', Date.now().toString());
+            }
+            
+            // Redireccionar según el propósito
+            if (pinPurpose === 'admin') {
+                // Redireccionar al panel de administración
+                window.location.href = 'dashboard.html';
+            } else if (pinPurpose === 'admin_redirect') {
+                // Redireccionar a la URL guardada
+                const redirectUrl = sessionStorage.getItem('adminRedirectAfterPin');
+                if (redirectUrl) {
+                    sessionStorage.removeItem('adminRedirectAfterPin');
+                    window.location.href = redirectUrl;
+                } else {
+                    // Si no hay URL, ir al dashboard por defecto
+                    window.location.href = 'dashboard.html';
+                }
+            } else if (pinPurpose === 'admin_create_profile') {
+                // Redireccionar a la creación de perfil
+                window.location.href = 'createProfile.html';
+            }
         } else {
             // Incrementar contador de intentos
             pinAttempts++;
@@ -554,6 +604,11 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.removeItem('currentProfile');
             localStorage.removeItem('adminPin');
             
+            // Limpiar sessionStorage
+            sessionStorage.removeItem('adminPinVerified');
+            sessionStorage.removeItem('adminPinVerifiedTime');
+            sessionStorage.removeItem('adminRedirectAfterPin');
+            
             // Redirigir a la página de login
             window.location.href = 'login.html';
         } catch (error) {
@@ -565,6 +620,11 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.removeItem('userName');
             localStorage.removeItem('currentProfile');
             localStorage.removeItem('adminPin');
+            
+            // Limpiar sessionStorage
+            sessionStorage.removeItem('adminPinVerified');
+            sessionStorage.removeItem('adminPinVerifiedTime');
+            sessionStorage.removeItem('adminRedirectAfterPin');
             
             window.location.href = 'login.html';
         }

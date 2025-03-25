@@ -8,6 +8,19 @@
 const publicPages = [
     'login.html',
     'signup.html',
+    'profileSelection.html',
+    'kidsDashboard.html'
+];
+
+// Lista de páginas de administrador que requieren PIN adicional
+const adminPages = [
+    'dashboard.html',
+    'createProfile.html',
+    'editProfile.html',
+    'createPlaylist.html',
+    'editPlaylist.html',
+    'addVideo.html',
+    'editVideo.html'
 ];
 
 // Posibles valores para el parámetro 'reason'
@@ -15,7 +28,8 @@ const loginReasons = {
     'login_required': 'Acceso restringido: Debes iniciar sesión para acceder a esa página.',
     'token_expired': 'Sesión expirada: Tu sesión ha caducado, por favor inicia sesión nuevamente.',
     'permission_denied': 'Permiso denegado: No tienes suficientes permisos para acceder a esa sección.',
-    'invalid_token': 'Sesión inválida: Por favor inicia sesión nuevamente.'
+    'invalid_token': 'Sesión inválida: Por favor inicia sesión nuevamente.',
+    'admin_pin_required': 'Verificación requerida: Debes ingresar el PIN de administrador para acceder a esta sección.'
 };
 
 // Función para verificar autenticación - EJECUTAR INMEDIATAMENTE
@@ -37,6 +51,23 @@ const loginReasons = {
         return false;
     }
     
+    // Para páginas de administrador, requerir verificación adicional de PIN
+    if (adminPages.includes(currentPage)) {
+        // Verificar si el PIN de administrador fue verificado recientemente
+        const adminPinVerified = sessionStorage.getItem('adminPinVerified');
+        const verificationTime = parseInt(sessionStorage.getItem('adminPinVerifiedTime') || '0');
+        const currentTime = Date.now();
+        const timeDiff = currentTime - verificationTime;
+        const MAX_VERIFICATION_TIME = 30 * 60 * 1000; // 30 minutos en milisegundos
+        
+        // Si no hay verificación o ha expirado, redirigir a selección de perfiles
+        if (!adminPinVerified || timeDiff > MAX_VERIFICATION_TIME) {
+            console.log('Acceso a página de administrador sin verificación de PIN. Redirigiendo...');
+            showAdminPinAlert();
+            return false;
+        }
+    }
+    
     // Verificar si el token ha expirado (decodificando JWT)
     try {
         const payload = JSON.parse(atob(token.split('.')[1]));
@@ -48,6 +79,8 @@ const loginReasons = {
             localStorage.removeItem('token');
             localStorage.removeItem('adminId');
             localStorage.removeItem('userName');
+            sessionStorage.removeItem('adminPinVerified');
+            sessionStorage.removeItem('adminPinVerifiedTime');
             showAuthAlert('token_expired');
             return false;
         }
@@ -76,6 +109,21 @@ function showAuthAlert(reason = 'login_required') {
     window.location.href = `login.html?reason=${reason}`;
 }
 
+// Función para mostrar alerta de PIN de administrador y redirigir
+function showAdminPinAlert() {
+    // Detener la carga de la página inmediatamente
+    window.stop();
+    
+    // Guardar la URL actual para redireccionar después de la verificación
+    sessionStorage.setItem('adminRedirectAfterPin', window.location.href);
+    
+    // Mostrar alerta nativa del navegador
+    alert(loginReasons['admin_pin_required']);
+    
+    // Redirigir a selección de perfiles con parámetro para solicitar PIN
+    window.location.href = 'profileSelection.html?verifyAdmin=true';
+}
+
 // Exportar función para uso explícito si es necesario
 window.checkAuth = function() {
     // Obtener la página actual
@@ -96,4 +144,10 @@ window.checkAuth = function() {
     }
     
     return true;
+};
+
+// Marcar como verificado el PIN de administrador
+window.markAdminPinVerified = function() {
+    sessionStorage.setItem('adminPinVerified', 'true');
+    sessionStorage.setItem('adminPinVerifiedTime', Date.now().toString());
 };
