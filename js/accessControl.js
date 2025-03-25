@@ -26,11 +26,18 @@ const loginReasons = {
 
 // Función para verificar autenticación - EJECUTAR INMEDIATAMENTE
 (function checkAuthenticationImmediately() {
-    // Obtener la página actual
-    const currentPage = window.location.pathname.split('/').pop() || '../shared/login.html';
+    // Obtener la página actual y la ruta completa
+    const path = window.location.pathname;
+    const currentPage = path.split('/').pop() || 'login.html';
+    
+    console.log('Verificando acceso a:', path);
+    
+    // Detectar si es una página de administrador (método más robusto)
+    const isAdminPage = path.includes('/admin/') || adminPages.includes(currentPage);
     
     // Si es una página pública, no verificar autenticación
     if (publicPages.includes(currentPage)) {
+        console.log('Página pública, acceso permitido');
         return true;
     }
     
@@ -44,13 +51,20 @@ const loginReasons = {
     }
     
     // Para páginas de administrador, requerir verificación adicional de PIN
-    if (adminPages.includes(currentPage)) {
+    if (isAdminPage) {
+        console.log('Página de administrador detectada, verificando PIN...');
         // Verificar si el PIN de administrador fue verificado recientemente
         const adminPinVerified = sessionStorage.getItem('adminPinVerified');
         const verificationTime = parseInt(sessionStorage.getItem('adminPinVerifiedTime') || '0');
         const currentTime = Date.now();
         const timeDiff = currentTime - verificationTime;
         const MAX_VERIFICATION_TIME = 30 * 60 * 1000; // 30 minutos en milisegundos
+        
+        console.log('Estado de verificación PIN:', { 
+            adminPinVerified, 
+            timeDiff, 
+            valid: (adminPinVerified && timeDiff <= MAX_VERIFICATION_TIME) 
+        });
         
         // Si no hay verificación o ha expirado, redirigir a selección de perfiles
         if (!adminPinVerified || timeDiff > MAX_VERIFICATION_TIME) {
@@ -97,8 +111,9 @@ function showAuthAlert(reason = 'login_required') {
     // Mostrar alerta nativa del navegador
     alert(loginReasons[reason] || loginReasons['login_required']);
     
-    // Redirigir a login con parámetro de razón
-    window.location.href = `../shared/login.html?reason=${reason}`;
+    // Determinar la ruta correcta según la estructura del sitio
+    // Usar una ruta absoluta desde la raíz del sitio
+    window.location.href = '../shared/login.html?reason=' + reason;
 }
 
 // Función para mostrar alerta de PIN de administrador y redirigir
@@ -113,13 +128,15 @@ function showAdminPinAlert() {
     alert(loginReasons['admin_pin_required']);
     
     // Redirigir a selección de perfiles con parámetro para solicitar PIN
+    // Usar una ruta absoluta desde la raíz del sitio
     window.location.href = '../users/profileSelection.html?verifyAdmin=true';
 }
 
 // Exportar función para uso explícito si es necesario
 window.checkAuth = function() {
     // Obtener la página actual
-    const currentPage = window.location.pathname.split('/').pop() || '../shared/login.html';
+    const path = window.location.pathname;
+    const currentPage = path.split('/').pop() || 'login.html';
     
     // Si es una página pública, no verificar autenticación
     if (publicPages.includes(currentPage)) {

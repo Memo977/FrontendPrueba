@@ -68,7 +68,7 @@ async function logout() {
         }
         
         setTimeout(() => {
-            window.location.href = 'login.html';
+            window.location.href = '../shared/login.html';
         }, 1000);
     } catch (error) {
         console.error('Error en logout:', error);
@@ -79,14 +79,14 @@ async function logout() {
         localStorage.removeItem('profilePin');
         localStorage.removeItem('adminPin');
         
-        window.location.href = 'login.html';
+        window.location.href = '../shared/login.html';
     }
 }
 
 // Verificar si el usuario tiene permisos para acceder a una página
 function checkAuth() {
     if (!isAuthenticated()) {
-        window.location.href = 'login.html';
+        window.location.href = '../shared/login.html';
         return false;
     }
     return true;
@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Redireccionar después de un breve retraso
                 setTimeout(() => {
-                    window.location.href = 'login.html';
+                    window.location.href = '../shared/login.html';
                 }, 2000);
             } catch (error) {
                 console.error('Error en registro:', error);
