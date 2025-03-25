@@ -27,7 +27,7 @@ const loginReasons = {
 // Función para verificar autenticación - EJECUTAR INMEDIATAMENTE
 (function checkAuthenticationImmediately() {
     // Obtener la página actual
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const currentPage = window.location.pathname.split('/').pop() || '../shared/index.html';
     
     // Si es una página pública, no verificar autenticación
     if (publicPages.includes(currentPage)) {
@@ -98,7 +98,7 @@ function showAuthAlert(reason = 'login_required') {
     alert(loginReasons[reason] || loginReasons['login_required']);
     
     // Redirigir a login con parámetro de razón
-    window.location.href = `login.html?reason=${reason}`;
+    window.location.href = `../shared/login.html?reason=${reason}`;
 }
 
 // Función para mostrar alerta de PIN de administrador y redirigir
@@ -113,13 +113,13 @@ function showAdminPinAlert() {
     alert(loginReasons['admin_pin_required']);
     
     // Redirigir a selección de perfiles con parámetro para solicitar PIN
-    window.location.href = 'profileSelection.html?verifyAdmin=true';
+    window.location.href = '../admin/profileSelection.html?verifyAdmin=true';
 }
 
 // Exportar función para uso explícito si es necesario
 window.checkAuth = function() {
     // Obtener la página actual
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const currentPage = window.location.pathname.split('/').pop() || '..?shared/login.html';
     
     // Si es una página pública, no verificar autenticación
     if (publicPages.includes(currentPage)) {
