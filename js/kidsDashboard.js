@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Esto es solo temporal para depuración
             console.error("No hay token de administrador en localStorage");
             alert("No se encontró el token de administrador. Por favor, inicie sesión nuevamente.");
-            window.location.href = 'index.html'; // Redirigir a la página de inicio de sesión
+            window.location.href = '../shared/login.html'; // Redirigir a la página de inicio de sesión
             return;
         }
         
