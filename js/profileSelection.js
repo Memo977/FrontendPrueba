@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Referencias a elementos del DOM
     const profilesContainer = document.getElementById('profilesContainer');
     const switchAccountBtn = document.getElementById('switchAccountBtn');
+    const adminNavBtn = document.getElementById('adminNavBtn');
     
     // Referencias para el modal de PIN
     const pinModal = document.getElementById('pinModal');
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedProfile = null;
     let enteredPin = '';
     let maxPinLength = 6;
+    let pinPurpose = ''; // Nueva variable para controlar el propósito del PIN (perfil, admin, nuevo perfil)
     
     // Inicialización
     init();
@@ -50,6 +52,13 @@ document.addEventListener('DOMContentLoaded', function() {
         switchAccountBtn.addEventListener('click', function() {
             handleLogout();
         });
+        
+        // Evento para el botón de administrador en la navbar
+        if (adminNavBtn) {
+            adminNavBtn.addEventListener('click', function() {
+                showAdminPinModal('admin');
+            });
+        }
         
         // Eventos para el teclado numérico del PIN
         pinButtons.forEach(button => {
@@ -96,9 +105,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Renderizar perfiles
             renderProfiles(profiles);
-            
-            // Añadir perfil de administrador
-            addAdminProfile();
         } catch (error) {
             console.error('Error:', error);
             profilesContainer.innerHTML = `
@@ -130,13 +136,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="text-center py-5">
                         <i class="bi bi-person-plus" style="font-size: 3rem; color: #6c757d;"></i>
                         <h3 class="mt-3">No hay perfiles infantiles</h3>
-                        <p class="text-muted">Crea un perfil infantil para comenzar.</p>
-                        <a href="createProfile.html" class="btn btn-primary mt-3">
-                            <i class="bi bi-plus-circle"></i> Crear perfil
-                        </a>
+                        <p class="text-muted">No hay perfiles disponibles.</p>
                     </div>
                 </div>
             `;
+            
             return;
         }
         
@@ -169,6 +173,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Mostrar el nombre del perfil en el modal
                 profileNameInModal.textContent = profileName;
                 
+                // Establecer el propósito del PIN
+                pinPurpose = 'profile';
+                
                 // Abrir modal para pedir PIN
                 const modal = new bootstrap.Modal(pinModal);
                 modal.show();
@@ -176,48 +183,22 @@ document.addEventListener('DOMContentLoaded', function() {
             
             profilesContainer.appendChild(profileCol);
         });
-        
-        // Añadir botón para crear nuevo perfil
-        const newProfileCol = document.createElement('div');
-        newProfileCol.className = 'col-6 col-sm-4 col-md-3';
-        
-        newProfileCol.innerHTML = `
-            <a href="createProfile.html" class="text-decoration-none">
-                <div class="profile-card">
-                    <div class="add-profile-btn">
-                        <i class="bi bi-plus-lg"></i>
-                    </div>
-                    <h5 class="profile-name">Nuevo perfil</h5>
-                </div>
-            </a>
-        `;
-        
-        profilesContainer.appendChild(newProfileCol);
     }
     
     /**
-     * Añade el perfil de administrador (para ir al panel de control)
+     * Muestra el modal para ingresar el PIN del administrador
+     * @param {string} purpose - Propósito del PIN: 'admin'
      */
-    function addAdminProfile() {
-        const adminCol = document.createElement('div');
-        adminCol.className = 'col-6 col-sm-4 col-md-3';
+    function showAdminPinModal(purpose) {
+        // Guardar el propósito
+        pinPurpose = purpose;
         
-        adminCol.innerHTML = `
-            <div class="profile-card admin-profile">
-                <div class="profile-avatar d-flex justify-content-center align-items-center">
-                    <i class="bi bi-person-gear"></i>
-                </div>
-                <h5 class="profile-name">Administrador</h5>
-            </div>
-        `;
+        // Modificar el título del modal según el propósito
+        profileNameInModal.textContent = 'Administrador';
         
-        // Añadir evento click para ir al dashboard de administrador
-        const adminCard = adminCol.querySelector('.profile-card');
-        adminCard.addEventListener('click', function() {
-            window.location.href = 'dashboard.html';
-        });
-        
-        profilesContainer.appendChild(adminCol);
+        // Mostrar el modal
+        const modal = new bootstrap.Modal(pinModal);
+        modal.show();
     }
     
     /**
@@ -273,8 +254,27 @@ document.addEventListener('DOMContentLoaded', function() {
      * Maneja la acción de enviar/verificar el PIN
      */
     async function handlePinSubmit() {
-        // Verificar que haya un perfil seleccionado y un PIN ingresado
-        if (!selectedProfile || enteredPin.length === 0) {
+        // Verificar que haya un PIN ingresado
+        if (enteredPin.length === 0) {
+            return;
+        }
+        
+        // Lógica según el propósito del PIN
+        if (pinPurpose === 'profile') {
+            // Verificar PIN de perfil infantil
+            await verifyProfilePin();
+        } else if (pinPurpose === 'admin') {
+            // Verificar PIN de administrador
+            verifyAdminPin();
+        }
+    }
+    
+    /**
+     * Verifica el PIN de un perfil infantil
+     */
+    async function verifyProfilePin() {
+        // Verificar que haya un perfil seleccionado
+        if (!selectedProfile) {
             return;
         }
         
@@ -336,12 +336,46 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     /**
-     * Muestra un mensaje de error para el PIN
+     * Verifica el PIN del administrador
+     * Este método verifica el PIN contra el valor almacenado en localStorage
      */
-    function showPinError() {
+    function verifyAdminPin() {
+        // Obtener el PIN del administrador almacenado durante el login
+        const adminPin = localStorage.getItem('adminPin');
+        
+        if (!adminPin) {
+            console.error('No se encontró el PIN del administrador');
+            showPinError('No se encontraron datos del administrador');
+            return;
+        }
+        
+        // Comparar el PIN ingresado con el PIN del administrador
+        if (enteredPin === adminPin) {
+            // PIN correcto
+            const modalInstance = bootstrap.Modal.getInstance(pinModal);
+            modalInstance.hide();
+            
+            // Redireccionar al panel de administración
+            window.location.href = 'dashboard.html';
+        } else {
+            // PIN incorrecto
+            showPinError();
+        }
+    }
+    
+    /**
+     * Muestra un mensaje de error para el PIN
+     * @param {string} message - Mensaje de error opcional
+     */
+    function showPinError(message = 'PIN incorrecto. Inténtalo de nuevo.') {
         // Resetear el PIN ingresado
         enteredPin = '';
         updatePinCircles();
+        
+        // Actualizar mensaje de error si se proporciona uno personalizado
+        if (message) {
+            pinError.textContent = message;
+        }
         
         // Mostrar mensaje de error
         pinError.style.display = 'inline-block';
@@ -359,6 +393,7 @@ document.addEventListener('DOMContentLoaded', function() {
         enteredPin = '';
         updatePinCircles();
         pinError.style.display = 'none';
+        pinPurpose = '';
     }
     
     /**
@@ -385,6 +420,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.removeItem('adminId');
                 localStorage.removeItem('userName');
                 localStorage.removeItem('currentProfile');
+                localStorage.removeItem('adminPin');
                 
                 // Redireccionar a la página de login
                 window.location.href = 'login.html';

@@ -530,6 +530,7 @@ async function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('adminId');
     localStorage.removeItem('userName');
+    localStorage.removeItem('adminPin');
     console.log('Datos de autenticación eliminados del localStorage');
     
     // Redirigir a la página de selección de perfiles

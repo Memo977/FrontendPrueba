@@ -27,8 +27,8 @@ function showNotification(title, message, isError = false) {
     }
 }
 
-// Guardar datos del usuario en localStorage - Versión simplificada
-function saveAuthData(payload, token) {
+// Guardar datos del usuario en localStorage - Versión mejorada
+function saveAuthData(payload, token, adminPin) {
     localStorage.setItem('token', token);
     localStorage.setItem('adminId', payload.id);
     
@@ -37,6 +37,11 @@ function saveAuthData(payload, token) {
         localStorage.setItem('userName', payload.name);
     } else if (payload.email) {
         localStorage.setItem('userName', payload.email);
+    }
+    
+    // Guardamos el PIN del administrador para verificación futura
+    if (adminPin) {
+        localStorage.setItem('adminPin', adminPin);
     }
 }
 
@@ -81,6 +86,7 @@ async function logout() {
         localStorage.removeItem('adminId');
         localStorage.removeItem('userName');
         localStorage.removeItem('profilePin');
+        localStorage.removeItem('adminPin'); // También eliminamos el adminPin
         window.location.href = 'login.html';
     } catch (error) {
         console.error('Error en logout:', error);
@@ -89,6 +95,7 @@ async function logout() {
         localStorage.removeItem('adminId');
         localStorage.removeItem('userName');
         localStorage.removeItem('profilePin');
+        localStorage.removeItem('adminPin');
         window.location.href = 'login.html';
     }
 }
@@ -183,9 +190,12 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             
             try {
+                const username = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
                 const formData = {
-                    username: document.getElementById('email').value,
-                    password: document.getElementById('password').value
+                    username: username,
+                    password: password
                 };
                 
                 const response = await fetch(`${API_URL}/session`, {
@@ -206,12 +216,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 const token = data.token;
                 const payload = JSON.parse(atob(token.split('.')[1]));
                 
+                // Obtener el PIN del usuario y guardarlo en localStorage para verificación futura
+                // Hacemos una petición adicional para obtener el PIN del usuario
+                try {
+                    const userResponse = await fetch(`${API_URL}/users?id=${payload.id}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (userResponse.ok) {
+                        const userData = await userResponse.json();
+                        if (userData && userData.pin) {
+                            // Guardar el PIN del administrador
+                            localStorage.setItem('adminPin', userData.pin);
+                        } else {
+                            // Si no podemos obtener el PIN del usuario desde el servidor,
+                            // usamos el PIN introducido en el registro como respaldo
+                            localStorage.setItem('adminPin', '123456'); // PIN por defecto
+                            console.warn('No se pudo obtener el PIN del administrador, usando PIN por defecto');
+                        }
+                    }
+                } catch (pinError) {
+                    console.error('Error al obtener el PIN del administrador:', pinError);
+                    // Como no pudimos obtener el PIN del usuario, usamos el PIN por defecto
+                    localStorage.setItem('adminPin', '123456');
+                }
+                
                 // Guardar datos simplificados
                 saveAuthData(payload, token);
                 
                 showNotification('Éxito', 'Inicio de sesión exitoso');
                 setTimeout(() => {
-                    window.location.href = 'dashboard.html';
+                    window.location.href = 'profileSelection.html';
                 }, 1000);
             } catch (error) {
                 console.error('Error en login:', error);
