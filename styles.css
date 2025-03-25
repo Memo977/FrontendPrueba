@@ -166,3 +166,32 @@ a:hover {
     margin-right: 0.5rem;
     color: #6c757d;
 }
+
+/* Añadir margen derecho a los iconos para separarlos del texto */
+.bi, 
+i.bi, 
+button i, 
+a i,
+.playlist-card i,
+.form-check-label i,
+label i {
+    margin-right: 0.35rem; /* Espacio moderado entre icono y texto */
+}
+
+/* Para los botones de añadir y editar específicamente */
+.btn i.bi-plus-circle,
+.btn i.bi-check-circle,
+.btn i.bi-pencil-square,
+.btn i.bi-check,
+.btn i.bi-pencil {
+    margin-right: 0.35rem;
+}
+
+/* Para elementos de lista como tus ítems "Memo" y "Melissa" */
+.list-item i,
+.menu-item i,
+.dropdown-item i,
+.playlist-item i,
+.profile-item i {
+    margin-right: 0.5rem; /* Un poco más de espacio para elementos de lista */
+}
