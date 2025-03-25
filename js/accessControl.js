@@ -27,7 +27,7 @@ const loginReasons = {
 // Función para verificar autenticación - EJECUTAR INMEDIATAMENTE
 (function checkAuthenticationImmediately() {
     // Obtener la página actual
-    const currentPage = window.location.pathname.split('/').pop() || '../shared/index.html';
+    const currentPage = window.location.pathname.split('/').pop() || '../shared/login.html';
     
     // Si es una página pública, no verificar autenticación
     if (publicPages.includes(currentPage)) {
@@ -113,13 +113,13 @@ function showAdminPinAlert() {
     alert(loginReasons['admin_pin_required']);
     
     // Redirigir a selección de perfiles con parámetro para solicitar PIN
-    window.location.href = '../admin/profileSelection.html?verifyAdmin=true';
+    window.location.href = '../users/profileSelection.html?verifyAdmin=true';
 }
 
 // Exportar función para uso explícito si es necesario
 window.checkAuth = function() {
     // Obtener la página actual
-    const currentPage = window.location.pathname.split('/').pop() || '..?shared/login.html';
+    const currentPage = window.location.pathname.split('/').pop() || '../shared/login.html';
     
     // Si es una página pública, no verificar autenticación
     if (publicPages.includes(currentPage)) {
