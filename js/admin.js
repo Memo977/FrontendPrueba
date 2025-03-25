@@ -15,80 +15,26 @@ let totalVideosCount = 0;
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('Inicializando dashboard...');
     
-    // Verificar autenticación y continuar solo si está autenticado
-    const isAuthenticated = await checkAuth();
+    // La verificación de autenticación ahora la maneja authGuard.js
+    // Solo continuamos con la inicialización del dashboard
     
-    if (isAuthenticated) {
-        // Solo inicializar eventos si el usuario está autenticado
-        initEvents();
-        console.log('Dashboard inicializado correctamente');
-    } else {
-        console.warn('No se pudo autenticar al usuario');
-    }
+    // Actualizar UI con nombre de usuario desde localStorage
+    updateUserInfoFromStorage();
+    
+    // Cargar los datos para el dashboard
+    console.log('Cargando datos del dashboard...');
+    await Promise.all([
+        loadRestrictedProfiles(),
+        loadPlaylists()
+    ]);
+    
+    // Calcular total de videos y actualizar contador
+    updateVideosCount();
+    
+    // Inicializar eventos de la página
+    initEvents();
+    console.log('Dashboard inicializado correctamente');
 });
-
-/**
- * Verifica si el usuario está autenticado
- */
-async function checkAuth() {
-    const token = localStorage.getItem('token');
-    
-    if (!token) {
-        console.error('No se encontró token de autenticación');
-        redirectToLogin('login_required');
-        return false;
-    }
-    
-    try {
-        console.log('Verificando token de autenticación...');
-        
-        // Decodificar el token JWT para obtener datos básicos
-        // Nota: Esto es solo para UI, no reemplaza la validación del servidor
-        let payload;
-        try {
-            payload = JSON.parse(atob(token.split('.')[1]));
-            console.log('Información básica del token:', payload.email);
-            
-            // Ya no es necesario guardar adminId aquí, lo hace auth.js
-        } catch (e) {
-            console.error('Error decodificando token:', e);
-        }
-        
-        // Actualizar UI con nombre de usuario desde localStorage
-        updateUserInfoFromStorage();
-        
-        // Verificar validez del token con una llamada a la API
-        const testResponse = await fetch(`${API_URL}/admin/restricted_users`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        
-        if (!testResponse.ok) {
-            console.error('Token inválido o expirado:', testResponse.status);
-            throw new Error('Token inválido');
-        }
-        
-        console.log('Token verificado correctamente');
-        
-        // Cargar los datos para el dashboard en paralelo
-        console.log('Cargando datos del dashboard...');
-        await Promise.all([
-            loadRestrictedProfiles(),
-            loadPlaylists()
-        ]);
-        
-        // Calcular total de videos y actualizar contador
-        updateVideosCount();
-        
-        return true;
-    } catch (error) {
-        console.error('Error de autenticación:', error);
-        redirectToLogin('session_expired');
-        return false;
-    }
-}
 
 /**
  * Actualiza información básica del usuario desde localStorage
@@ -126,7 +72,7 @@ async function loadUserData() {
         if (!response.ok) {
             console.error('Error al cargar datos de usuario:', response.status);
             showNotification('error', 'Error al cargar datos completos de usuario');
-            return; // No redirijas, solo muestra un error
+            return;
         }
         
         currentUser = await response.json();
@@ -588,31 +534,6 @@ async function logout() {
     
     // Redirigir a la página de selección de perfiles
     window.location.href = 'login.html';
-}
-
-/**
- * Cierre de sesión completo (eliminando adminId)
- * Útil para cambiar completamente de cuenta
- */
-function completeLogout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('adminId');
-    localStorage.removeItem('userName');
-    window.location.href = 'login.html';
-}
-
-/**
- * Redirige al usuario a la página de login
- * @param {string} reason - Razón del redireccionamiento
- */
-function redirectToLogin(reason) {
-    console.log(`Redirigiendo a login. Razón: ${reason}`);
-    
-    // Guardar la URL actual para redirigir después del login
-    sessionStorage.setItem('redirectAfterLogin', window.location.href);
-    
-    // Redirigir a login con parámetro de razón
-    window.location.href = `login.html?reason=${reason}`;
 }
 
 /**
