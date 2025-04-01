@@ -1,4 +1,3 @@
-/* Elementos específicos del dashboard que podrían tener fondos claros */
 .dark-mode .bg-light,
 .dark-mode .bg-white,
 .dark-mode .bg-f8f9fa {
@@ -6,7 +5,6 @@
     color: var(--text-color) !important;
 }
 
-/* Elementos de iconos en dashboards con fondos específicos */
 .dark-mode .stat-icon,
 .dark-mode .stats-icon,
 .dark-mode .icon-wrapper {
@@ -14,23 +12,21 @@
     color: var(--text-color) !important;
 }
 
-/* Colores específicos para iconos que pudieran tener colores predefinidos */
 .dark-mode .stat-icon.bg-profiles,
 .dark-mode .stat-icon.bg-primary {
-    background-color: var(--primary-color) !important; /* Cambiado a rojo Netflix */
+    background-color: var(--primary-color) !important;
 }
 
 .dark-mode .stat-icon.bg-playlists,
 .dark-mode .stat-icon.bg-success {
-    background-color: #0F9D58 !important; /* Verde Google */
+    background-color: #0F9D58 !important;
 }
 
 .dark-mode .stat-icon.bg-videos,
 .dark-mode .stat-icon.bg-danger {
-    background-color: #DB4437 !important; /* Rojo Google */
+    background-color: #DB4437 !important;
 }
 
-/* Badges y pequeños indicadores */
 .dark-mode .badge.bg-light {
     background-color: var(--darker-bg) !important;
     color: var(--text-color) !important;
@@ -42,19 +38,16 @@
     color: var(--text-color) !important;
 }
 
-/* Ajustes para el fondo principal */
 body.dark-mode {
     background-color: var(--dark-bg) !important;
     color: var(--text-color) !important;
 }
 
-/* Contenedores en general */
 .dark-mode .container .row,
 .dark-mode .container-fluid .row {
     color: var(--text-color) !important;
 }
 
-/* Ajustes específicos para bordes */
 .dark-mode .border,
 .dark-mode .border-top,
 .dark-mode .border-bottom,
@@ -63,7 +56,6 @@ body.dark-mode {
     border-color: var(--border-color) !important;
 }
 
-/* Aseguramos que todos los textos se vean bien */
 .dark-mode h1, 
 .dark-mode h2, 
 .dark-mode h3, 
@@ -76,7 +68,7 @@ body.dark-mode {
 .dark-mode p,
 .dark-mode .text-muted {
     color: var(--text-secondary) !important;
-}/* Todos los contenedores de cards, incluidos los del dashboard */
+}
 .dark-mode .card,
 .dark-mode .card.shadow,
 .dark-mode .card.shadow-sm,
@@ -103,7 +95,6 @@ body.dark-mode {
     box-shadow: 0 8px 16px var(--shadow-color) !important;
 }
 
-/* Estilos de texto específicos para las cards */
 .dark-mode .card h1, 
 .dark-mode .card h2, 
 .dark-mode .card h3, 
@@ -131,12 +122,8 @@ body.dark-mode {
 .dark-mode .video-meta,
 .dark-mode .video-description {
     color: var(--text-secondary) !important;
-}/* 
- * dark-mode-complete.css - Modo oscuro completo para KidsTube
- * Incluye todos los estilos necesarios para todas las páginas de la aplicación
- */
+}
 
-/* Variables de colores del tema oscuro */
 :root.dark-mode {
     --primary-color: #E50914;      /* Rojo Netflix */
     --primary-hover: #F40612;      /* Rojo Netflix más claro */
@@ -154,13 +141,11 @@ body.dark-mode {
     --shadow-color: rgba(0, 0, 0, 0.5);  /* Color de sombras */
 }
 
-/* ----- ESTILOS GENERALES EN MODO OSCURO ----- */
 body.dark-mode {
     background-color: var(--dark-bg);
     color: var(--text-color);
 }
 
-/* ----- NAVBAR EN MODO OSCURO ----- */
 .dark-mode .navbar {
     background: var(--darker-bg) !important;
     box-shadow: 0 2px 8px var(--shadow-color);
@@ -185,7 +170,6 @@ body.dark-mode {
     background: var(--darker-bg) !important;
 }
 
-/* ----- BOTONES EN MODO OSCURO ----- */
 .dark-mode .btn-primary {
     background: var(--primary-color);
     box-shadow: 0 4px 10px rgba(229, 9, 20, 0.3);
@@ -229,7 +213,6 @@ body.dark-mode {
     color: var(--text-color);
 }
 
-/* ----- CARDS EN MODO OSCURO ----- */
 .dark-mode .card {
     background-color: var(--card-bg);
     color: var(--text-color);
@@ -255,7 +238,6 @@ body.dark-mode {
     color: var(--text-color);
 }
 
-/* ----- FORMULARIOS EN MODO OSCURO ----- */
 .dark-mode .form-control,
 .dark-mode .input-group-text {
     background-color: var(--input-bg);
@@ -283,7 +265,6 @@ body.dark-mode {
     color: var(--text-secondary);
 }
 
-/* ----- MENÚS DESPLEGABLES EN MODO OSCURO ----- */
 .dark-mode .dropdown-menu {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -303,7 +284,6 @@ body.dark-mode {
     border-top: 1px solid var(--border-color);
 }
 
-/* ----- ALERTAS Y NOTIFICACIONES EN MODO OSCURO ----- */
 .dark-mode .alert {
     background-color: var(--card-bg);
     color: var(--text-color);
@@ -321,7 +301,6 @@ body.dark-mode {
     border-bottom: 1px solid var(--border-color);
 }
 
-/* ----- MODALES EN MODO OSCURO ----- */
 .dark-mode .modal-content {
     background-color: var(--card-bg);
     color: var(--text-color);
@@ -338,9 +317,6 @@ body.dark-mode {
     background-color: var(--card-bg);
 }
 
-/* ----- COMPONENTES ESPECÍFICOS DE KIDSTUBE ----- */
-
-/* Dashboard de administrador */
 .dark-mode .welcome-card {
     background-color: var(--card-bg);
     color: var(--text-color);
@@ -405,7 +381,6 @@ body.dark-mode {
     color: var(--text-secondary);
 }
 
-/* Dashboard de niños */
 .dark-mode .welcome-section {
     background: linear-gradient(135deg, #2D2D2D, #1F1F1F);
 }
@@ -418,14 +393,12 @@ body.dark-mode {
     color: var(--text-secondary);
 }
 
-/* Específico para el campo de búsqueda */
 .dark-mode .search-box .form-control {
     background-color: rgba(255, 255, 255, 0.1);
     color: var(--text-color);
     border: none;
 }
 
-/* Solo aplicamos el color blanco al placeholder en modo oscuro */
 .dark-mode .search-box .form-control::placeholder,
 .dark-mode #searchInput::placeholder {
     color: white !important;
@@ -478,14 +451,12 @@ body.dark-mode {
     color: var(--text-secondary);
 }
 
-/* Selección de perfiles */
 .dark-mode .profile-name {
     color: var(--text-color) !important;
     font-weight: 500 !important;
     margin-top: 10px !important;
 }
 
-/* NUEVO: Eliminar el fondo de las tarjetas de perfil */
 .dark-mode .profile-card {
     background-color: transparent !important;
     box-shadow: none !important;
@@ -495,7 +466,7 @@ body.dark-mode {
 .dark-mode .profile-avatar {
     border: 3px solid var(--primary-color) !important;
     box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3) !important;
-    background-color: white !important; /* Mantener fondo blanco para el avatar */
+    background-color: white !important;
     transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
 }
 
@@ -505,7 +476,6 @@ body.dark-mode {
     box-shadow: 0 6px 15px rgba(229, 9, 20, 0.4) !important;
 }
 
-/* NUEVO: Ajuste para el contenedor principal */
 .dark-mode #profilesContainer .col {
     background-color: transparent !important;
 }
@@ -542,7 +512,6 @@ body.dark-mode {
     background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* PIN Modal */
 .dark-mode #pinModal .modal-content {
     background: linear-gradient(to bottom, #262626, #1a1a1a);
 }
@@ -586,7 +555,6 @@ body.dark-mode {
     background-color: var(--primary-hover);
 }
 
-/* Playlists */
 .dark-mode .playlist-section {
     margin-bottom: 2.5rem;
 }
@@ -596,12 +564,10 @@ body.dark-mode {
     color: white;
 }
 
-/* Mejorar la apariencia del reproductor de video */
 .dark-mode #videoPlayer {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
 }
 
-/* Estilos para la página de creación/edición de perfil */
 .dark-mode .avatar-option {
     background-color: var(--card-bg);
     border-color: var(--border-color);
@@ -629,7 +595,6 @@ body.dark-mode {
     background-color: var(--card-hover-bg);
 }
 
-/* Estilos para la página de creación/edición de videos */
 .dark-mode .video-preview-wrapper {
     background-color: var(--darker-bg);
     border: 1px solid var(--border-color);
@@ -640,7 +605,6 @@ body.dark-mode {
     color: var(--text-secondary);
 }
 
-/* Estilos para el selector de tema (solo icono) */
 .theme-switch-wrapper {
     display: flex;
     align-items: center;
@@ -669,11 +633,11 @@ body.dark-mode {
 }
 
 .theme-toggle-btn .bi-sun-fill {
-    color: #FDB813; /* Color amarillo dorado para el sol */
+    color: #FDB813;
 }
 
 .theme-toggle-btn .bi-moon-fill {
-    color: #FFFFFF; /* Color blanco para la luna */
+    color: #FFFFFF;
 }
 
 .theme-toggle-btn:hover {
@@ -681,19 +645,15 @@ body.dark-mode {
 }
 
 #themeSwitchWrapper {
-    /* Estos estilos serán sobrescritos por JS */
 }
 
-/* Restaurar estilos originales para encabezados de categorías */
 .dark-mode .playlist-header,
 .dark-mode .category-header,
 .dark-mode .section-header {
-    /* Eliminamos el fondo rojo para volver al diseño original */
     background-color: transparent !important;
     border-bottom: 2px solid var(--border-color) !important;
 }
 
-/* Mejorar el hover de los botones de edición en modo oscuro */
 .dark-mode .btn-edit,
 .dark-mode .btn-edit-playlist,
 .dark-mode .edit-button,
@@ -713,7 +673,6 @@ body.dark-mode {
     color: var(--primary-color) !important;
 }
 
-/* Estilo para botones de acción como eliminar */
 .dark-mode .btn-delete,
 .dark-mode .delete-button,
 .dark-mode .btn-danger,
@@ -732,7 +691,6 @@ body.dark-mode {
     color: #dc3545 !important;
 }
 
-/* Mantener contrastes adecuados para botones con íconos */
 .dark-mode .btn-icon,
 .dark-mode .action-button {
     background-color: rgba(255, 255, 255, 0.1) !important;
@@ -743,8 +701,6 @@ body.dark-mode {
 .dark-mode .action-button:hover {
     background-color: rgba(255, 255, 255, 0.2) !important;
 }
-
-/* Restaurar estilos para los contadores de videos */
 .dark-mode .video-count,
 .dark-mode .videos-count,
 .dark-mode .badge.bg-danger {
@@ -752,7 +708,6 @@ body.dark-mode {
     color: white !important;
 }
 
-/* Corregir hover en elementos de video en edición de playlist */
 .dark-mode .video-item:hover,
 .dark-mode .playlist-video-item:hover,
 .dark-mode .edit-playlist-video-item:hover,
@@ -760,11 +715,10 @@ body.dark-mode {
 .dark-mode tr:hover,
 .dark-mode .table-row:hover,
 .dark-mode tbody tr:hover {
-    background-color: rgba(40, 40, 40, 0.8) !important; /* Gris oscuro semi-transparente */
+    background-color: rgba(40, 40, 40, 0.8) !important;
     color: var(--text-color) !important;
 }
 
-/* Asegurar que el texto permanezca visible en hover */
 .dark-mode .video-item:hover *,
 .dark-mode .playlist-video-item:hover *,
 .dark-mode .edit-playlist-video-item:hover *,
@@ -775,14 +729,12 @@ body.dark-mode {
     color: var(--text-color) !important;
 }
 
-/* Si hay elementos con clases específicas que necesiten estilos adicionales */
 .dark-mode .video-title:hover,
 .dark-mode .video-details:hover,
 .dark-mode .video-info:hover {
     color: var(--text-color) !important;
 }
 
-/* Si hay algún borde que cambie en el hover */
 .dark-mode .video-item:hover,
 .dark-mode .playlist-video-item:hover,
 .dark-mode .edit-playlist-video-item:hover,
@@ -791,29 +743,25 @@ body.dark-mode {
     border-color: var(--border-color) !important;
 }
 
-/* Para elementos que puedan estar usando tablas o estructuras similares */
 .dark-mode .table-hover tbody tr:hover {
     background-color: rgba(40, 40, 40, 0.8) !important;
     color: var(--text-color) !important;
 }
 
-/* En caso de que haya alguna fila alternada con colores diferentes */
 .dark-mode .table-striped tbody tr:nth-of-type(odd):hover {
     background-color: rgba(40, 40, 40, 0.8) !important;
 }
 
-/* Estilo especial para el elemento actualmente seleccionado (si existe) */
 .dark-mode .video-item.active,
 .dark-mode .playlist-video-item.active,
 .dark-mode .edit-playlist-video-item.active,
 .dark-mode .video-list-item.active,
 .dark-mode tr.active,
 .dark-mode .table-row.active {
-    background-color: rgba(229, 9, 20, 0.2) !important; /* Fondo rojo sutil */
+    background-color: rgba(229, 9, 20, 0.2) !important;
     border-left: 3px solid var(--primary-color) !important;
 }
 
-/* Desactivar hover en tarjetas de edición/creación */
 .dark-mode .edit-card,
 .dark-mode .create-card,
 .dark-mode form.card,
@@ -823,7 +771,6 @@ body.dark-mode {
 .dark-mode .edit-profile-form,
 .dark-mode .create-playlist-form,
 .dark-mode .create-profile-form {
-    /* Mantener siempre el color de fondo original sin efecto hover */
     background-color: var(--card-bg) !important;
     transition: none !important;
 }
@@ -837,13 +784,11 @@ body.dark-mode {
 .dark-mode .edit-profile-form:hover,
 .dark-mode .create-playlist-form:hover,
 .dark-mode .create-profile-form:hover {
-    /* Anular explícitamente cualquier cambio en hover */
     background-color: var(--card-bg) !important;
     box-shadow: 0 4px 12px var(--shadow-color) !important;
     transform: none !important;
 }
 
-/* Asegurar que los elementos dentro de las tarjetas también mantengan su estilo */
 .dark-mode .edit-card *:hover,
 .dark-mode .create-card *:hover,
 .dark-mode form.card *:hover,
@@ -853,11 +798,9 @@ body.dark-mode {
 .dark-mode .edit-profile-form *:hover,
 .dark-mode .create-playlist-form *:hover,
 .dark-mode .create-profile-form *:hover {
-    /* Excepto para controles que necesiten feedback visual */
     background-color: inherit !important;
 }
 
-/* Permitir hover específico en controles interactivos dentro de los formularios */
 .dark-mode .edit-card .btn:hover,
 .dark-mode .create-card .btn:hover,
 .dark-mode form.card .btn:hover,
@@ -874,16 +817,9 @@ body.dark-mode {
 .dark-mode .form-container .form-control:focus,
 .dark-mode .edit-playlist-form .form-control:focus,
 .dark-mode .edit-profile-form .form-control:focus {
-    /* Restaurar comportamiento hover para botones y campos de formulario */
     background-color: initial !important;
 }
 
-/* 
- * dark-mode-fixes.css - Correcciones específicas para formularios en modo oscuro
- * Estas reglas deben añadirse al final de tu archivo dark-mode.css
- */
-
-/* Mejoras para los encabezados de cards en modo oscuro */
 .dark-mode .card-header.bg-primary {
     background: var(--darker-bg) !important;
     background-image: none !important;
@@ -891,18 +827,15 @@ body.dark-mode {
     color: var(--text-color) !important;
 }
 
-/* Ajustes de color para tarjetas en formularios */
 .dark-mode .card {
     background-color: var(--card-bg) !important;
     border-color: var(--border-color) !important;
 }
 
-/* Título de card en modo oscuro */
 .dark-mode .card-title {
     color: var(--text-color) !important;
 }
 
-/* Inputs y controles de formulario en modo oscuro */
 .dark-mode .form-control, 
 .dark-mode .input-group-text {
     background-color: var(--input-bg) !important;
@@ -920,7 +853,6 @@ body.dark-mode {
     color: var(--text-secondary) !important;
 }
 
-/* Ajustes para etiquetas y textos en formularios */
 .dark-mode .form-label {
     color: var(--text-color) !important;
 }
@@ -932,16 +864,14 @@ body.dark-mode {
     color: var(--text-secondary) !important;
 }
 
-/* Estilo de enlaces en modo oscuro */
 .dark-mode a {
-    color: #4dabf7; /* Azul más claro para enlaces en modo oscuro */
+    color: #4dabf7;
 }
 
 .dark-mode a:hover {
-    color: #74c0fc; /* Azul más brillante al pasar el mouse */
+    color: #74c0fc;
 }
 
-/* Asegurar que los modales tengan el estilo correcto */
 .dark-mode .modal-content {
     background-color: var(--card-bg) !important;
     border-color: var(--border-color) !important;
@@ -952,7 +882,6 @@ body.dark-mode {
     border-color: var(--border-color) !important;
 }
 
-/* Sobreescribir los estilos de botones para modo oscuro */
 .dark-mode .btn-primary {
     background: var(--primary-color) !important;
     background-image: none !important;
@@ -987,7 +916,6 @@ body.dark-mode {
     color: white !important;
 }
 
-/* Mejoras para las tarjetas de creación/edición */
 .dark-mode .create-card,
 .dark-mode .edit-card,
 .dark-mode form.card {
@@ -1001,19 +929,16 @@ body.dark-mode {
     box-shadow: 0 4px 12px var(--shadow-color) !important;
 }
 
-/* Ajustes para iconos en diversos elementos */
 .dark-mode i.bi,
 .dark-mode .bi::before {
     color: inherit;
 }
 
-/* Corrección para fondo de cuerpo en todas las páginas */
 body.dark-mode {
     background-color: var(--dark-bg) !important;
     color: var(--text-color) !important;
 }
 
-/* Ajustes para dropdowns */
 .dark-mode .dropdown-menu {
     background-color: var(--card-bg) !important;
     border-color: var(--border-color) !important;
@@ -1032,27 +957,23 @@ body.dark-mode {
     border-color: var(--border-color) !important;
 }
 
-/* Preservar el color de texto del botón cancelar */
 .dark-mode button[id="cancelBtn"],
 .dark-mode a[href="dashboard.html"].btn-secondary,
 .dark-mode a.btn-secondary:has(i.bi-x-circle) {
     color: #fff !important;
 }
 
-/* Preservar colores originales del botón Crear Playlist */
 .dark-mode a.btn-primary[href*="crear"],
 .dark-mode button.btn-success[id*="crear"],
 .dark-mode a.btn.btn-success {
-    background: #0F9D58 !important; /* Verde Google */
+    background: #0F9D58 !important;
     color: white !important;
 }
 
-/* Mantener iconos con colores originales */
 .dark-mode .btn i.bi {
     color: inherit;
 }
 
-/* Regla específica para los iconos en las tarjetas */
 .dark-mode .card i.bi,
 .dark-mode .card .bi::before,
 .dark-mode .playlist-thumbnail i,
@@ -1060,29 +981,20 @@ body.dark-mode {
     color: inherit !important;
 }
 
-/* Regla específica para los iconos en los botones */
 .dark-mode .btn i.bi,
 .dark-mode .btn .bi::before {
     color: inherit !important;
 }
 
-/* Regla específica para el icono del botón Crear Playlist */
 .dark-mode a.btn-success i.bi-plus-circle,
 .dark-mode button.btn-success i.bi-plus-circle {
     color: white !important;
 }
 
-/* Regla específica para los iconos en las miniaturas de playlist */
 .dark-mode .playlist-thumbnail i.bi-collection-play {
-    color: #0d6efd !important; /* Azul original */
+    color: #0d6efd !important;
 }
 
-/* 
- * Corrección para el color de texto en inputs según el tema
- * Añadir estas reglas al final de dark-mode.css
- */
-
-/* Color de texto en todos los inputs en modo oscuro */
 .dark-mode input[type="text"],
 .dark-mode input[type="email"],
 .dark-mode input[type="password"],
@@ -1098,7 +1010,6 @@ body.dark-mode {
     border-color: var(--input-border) !important;
 }
 
-/* Color del placeholder en todos los inputs en modo oscuro */
 .dark-mode input::placeholder,
 .dark-mode textarea::placeholder,
 .dark-mode select::placeholder {
@@ -1106,7 +1017,6 @@ body.dark-mode {
     opacity: 1 !important;
 }
 
-/* Asegurar que los inputs deshabilitados también tengan el color correcto */
 .dark-mode input:disabled,
 .dark-mode textarea:disabled,
 .dark-mode select:disabled {
@@ -1114,7 +1024,6 @@ body.dark-mode {
     color: var(--text-secondary) !important;
 }
 
-/* Foco en los inputs para modo oscuro */
 .dark-mode input:focus,
 .dark-mode textarea:focus,
 .dark-mode select:focus {
@@ -1124,19 +1033,16 @@ body.dark-mode {
     color: var(--input-text) !important;
 }
 
-/* Avatar en pantallas de crear y editar perfil */
 .dark-mode .avatar-preview,
 .dark-mode .avatar-option.selected {
-    border-color: var(--primary-color) !important; /* Rojo Netflix */
+    border-color: var(--primary-color) !important;
     box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.25) !important;
 }
 
-/* Avatar al pasar el cursor por encima */
 .dark-mode .avatar-option:hover {
     border-color: var(--primary-color) !important;
 }
 
-/* Para asegurar que se aplique a todos los avatares en selección, edición y creación */
 .dark-mode .profile-avatar,
 .dark-mode .avatar-container img,
 .dark-mode .avatar-preview img {

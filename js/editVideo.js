@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Referencias a elementos del DOM
     const editVideoForm = document.getElementById('editVideoForm');
     const loadingIndicator = document.getElementById('loadingIndicator');
     const videoNameInput = document.getElementById('videoName');

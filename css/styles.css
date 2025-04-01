@@ -1,11 +1,9 @@
-/* Estilos generales */
 body {
     background-color: #f8f9fa;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #333;
 }
 
-/* Estilos para el navbar */
 .navbar {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -15,7 +13,6 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* Estilos para las cards */
 .card {
     border-radius: 8px;
     border: none;
@@ -45,7 +42,6 @@ body {
     padding: 1.5rem;
 }
 
-/* Estilos para los botones */
 .btn {
     border-radius: 5px;
     font-weight: 500;
@@ -87,7 +83,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* Estilos para los formularios */
 .form-control {
     border-radius: 5px;
     border: 1px solid #ced4da;
@@ -111,7 +106,6 @@ body {
     border-color: #ced4da;
 }
 
-/* Estilos para el avatar circular */
 .rounded-circle {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
@@ -122,7 +116,6 @@ body {
     transform: scale(1.05);
 }
 
-/* Enlaces */
 a {
     color: #0d6efd;
     text-decoration: none;
@@ -134,7 +127,6 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Responsive ajustments */
 @media (max-width: 768px) {
     .container {
         padding-left: 20px;
@@ -167,7 +159,6 @@ a:hover {
     color: #6c757d;
 }
 
-/* Añadir margen derecho a los iconos para separarlos del texto */
 .bi, 
 i.bi, 
 button i, 
@@ -175,10 +166,9 @@ a i,
 .playlist-card i,
 .form-check-label i,
 label i {
-    margin-right: 0.35rem; /* Espacio moderado entre icono y texto */
+    margin-right: 0.35rem;
 }
 
-/* Para los botones de añadir y editar específicamente */
 .btn i.bi-plus-circle,
 .btn i.bi-check-circle,
 .btn i.bi-pencil-square,
@@ -187,11 +177,153 @@ label i {
     margin-right: 0.35rem;
 }
 
-/* Para elementos de lista como tus ítems "Memo" y "Melissa" */
 .list-item i,
 .menu-item i,
 .dropdown-item i,
 .playlist-item i,
 .profile-item i {
-    margin-right: 0.5rem; /* Un poco más de espacio para elementos de lista */
+    margin-right: 0.5rem;
+}
+
+.login-page {
+    background-color: #121212;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.login-container {
+    padding-top: 0;
+    padding-bottom: 2rem;
+}
+
+.logo-login {
+    font-size: 2.8rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.logo-login i {
+    color: white;
+}
+
+.login-card {
+    border: none;
+    border-radius: 12px;
+    background-color: #1e1e1e;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.login-card h2 {
+    color: white;
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+.avatar-login {
+    width: 80px;
+    height: 80px;
+    background-color: #333;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    position: relative;
+}
+
+.avatar-login i {
+    font-size: 2.5rem;
+    color: white;
+    position: relative;
+    top: 3px;
+}
+
+.login-card .form-label {
+    color: #e0e0e0;
+}
+
+.login-card .input-group-text {
+    background-color: #333;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+.login-card .form-control {
+    background-color: #333;
+    border-color: #444;
+    color: white;
+}
+
+.login-card .form-control::placeholder {
+    color: #999;
+}
+
+.login-card .form-control:focus {
+    background-color: #333;
+    border-color: #E50914;
+    box-shadow: 0 0 0 0.25rem rgba(229, 9, 20, 0.25);
+    color: white;
+}
+
+.login-card .btn-danger {
+    background-color: #E50914;
+    border-color: #E50914;
+    padding: 0.6rem;
+    font-weight: 500;
+}
+
+.login-card .btn-danger:hover {
+    background-color: #c5070f;
+}
+
+.login-card a {
+    color: #E50914;
+    text-decoration: none;
+}
+
+.login-card a:hover {
+    text-decoration: underline;
+}
+
+.login-card p {
+    color: #bbb;
+}
+
+@media (max-width: 576px) {
+    .logo-login {
+        font-size: 2.2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .avatar-login {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .avatar-login i {
+        font-size: 2.2rem;
+    }
+    
+    .login-card {
+        margin: 0 10px;
+    }
+}
+
+.card-body .text-center .bg-light.rounded-circle {
+    padding: 0 !important;
+    position: relative !important;
+}
+
+.card-body .text-center .bg-light.rounded-circle i.bi-person-circle {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
 }

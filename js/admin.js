@@ -1,4 +1,3 @@
-// Configuración de la API
 const API_URL = 'http://localhost:3000/api';
 
 // Variables globales
@@ -7,14 +6,9 @@ let restrictedProfiles = [];
 let playlists = [];
 let totalVideosCount = 0;
 
-// Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('Inicializando dashboard...');
-    
-    // La verificación de autenticación ahora la maneja authGuard.js
-    // Solo continuamos con la inicialización del dashboard
-    
-    // Actualizar UI con nombre de usuario desde localStorage
+
     updateUserInfoFromStorage();
     
     // Cargar los datos para el dashboard

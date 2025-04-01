@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Referencias a elementos del DOM
     const editProfileForm = document.getElementById('editProfileForm');
     const loadingIndicator = document.getElementById('loadingIndicator');
     const fullNameInput = document.getElementById('fullName');

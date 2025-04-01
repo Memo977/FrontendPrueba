@@ -1,12 +1,10 @@
-// Configuración global para peticiones API
 const API_URL = 'http://localhost:3000/api';
 
-// Guardar datos del usuario en localStorage - Versión mejorada
+// Guardar datos del usuario en localStorage
 function saveAuthData(payload, token, adminPin) {
     localStorage.setItem('token', token);
     localStorage.setItem('adminId', payload.id);
     
-    // Guardamos el nombre para mostrar en la UI
     if (payload.name) {
         localStorage.setItem('userName', payload.name);
     } else if (payload.email) {
@@ -29,7 +27,6 @@ function getAdminId() {
     return localStorage.getItem('adminId');
 }
 
-// Verificar si el usuario está logueado
 function isAuthenticated() {
     return !!getToken();
 }
@@ -51,7 +48,6 @@ async function logout() {
         });
 
         if (!response.ok) {
-            // Aquí ignoramos el error de API y mostramos nuestro propio mensaje
             console.warn('Error al cerrar sesión en API pero continuamos con cierre local');
         }
 
@@ -92,7 +88,6 @@ function checkAuth() {
     return true;
 }
 
-// Función para actualizar el nombre del usuario en la UI
 function updateUserUI() {
     const userDisplayName = document.getElementById('userDisplayName');
     if (userDisplayName) {
@@ -105,7 +100,6 @@ function updateUserUI() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Inicializando auth.js...');
     
-    // Actualizar UI con datos del usuario si está en una página que lo requiere
     if (document.getElementById('userDisplayName')) {
         updateUserUI();
     }

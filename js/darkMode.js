@@ -6,7 +6,7 @@ function positionThemeSwitch() {
     // Aplicar estilos para posicionar en la esquina superior derecha - solo el icono
     Object.assign(themeWrapper.style, {
         position: 'fixed',
-        top: '15px',
+        top: '75px',
         right: '15px',
         zIndex: '9999',
         display: 'flex',

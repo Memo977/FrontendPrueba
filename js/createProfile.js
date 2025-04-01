@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Referencias a elementos del DOM
     const createProfileForm = document.getElementById('createProfileForm');
     const fullNameInput = document.getElementById('fullName');
     const pinInput = document.getElementById('pin');
@@ -16,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedAvatarUrl = selectedAvatar.src; // Avatar predeterminado
     let playlists = [];
     
-    // Inicialización
     init();
     
     /**

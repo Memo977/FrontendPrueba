@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Referencias a elementos del DOM
     const editPlaylistForm = document.getElementById('editPlaylistForm');
     const loadingIndicator = document.getElementById('loadingIndicator');
     const playlistNameInput = document.getElementById('playlistName');

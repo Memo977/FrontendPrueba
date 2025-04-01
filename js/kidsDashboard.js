@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Referencias a elementos del DOM
   const welcomeTitle = document.getElementById("welcomeTitle");
   const profileName = document.getElementById("profileName");
   const navProfileAvatar = document.getElementById("navProfileAvatar");

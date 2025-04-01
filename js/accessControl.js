@@ -1,10 +1,8 @@
-// Lista de páginas públicas que no requieren autenticación
 const publicPages = [
     'login.html',
     'signup.html',
 ];
 
-// Lista de páginas de administrador que requieren PIN adicional
 const adminPages = [
     'dashboard.html',
     'createProfile.html',
@@ -15,7 +13,6 @@ const adminPages = [
     'editVideo.html'
 ];
 
-// Posibles valores para el parámetro 'reason'
 const loginReasons = {
     'login_required': 'Acceso restringido: Debes iniciar sesión para acceder a esa página.',
     'token_expired': 'Sesión expirada: Tu sesión ha caducado, por favor inicia sesión nuevamente.',
@@ -53,12 +50,11 @@ const loginReasons = {
     // Para páginas de administrador, requerir verificación adicional de PIN
     if (isAdminPage) {
         console.log('Página de administrador detectada, verificando PIN...');
-        // Verificar si el PIN de administrador fue verificado recientemente
         const adminPinVerified = sessionStorage.getItem('adminPinVerified');
         const verificationTime = parseInt(sessionStorage.getItem('adminPinVerifiedTime') || '0');
         const currentTime = Date.now();
         const timeDiff = currentTime - verificationTime;
-        const MAX_VERIFICATION_TIME = 30 * 60 * 1000; // 30 minutos en milisegundos
+        const MAX_VERIFICATION_TIME = 30 * 60 * 1000;
         
         console.log('Estado de verificación PIN:', { 
             adminPinVerified, 
@@ -66,7 +62,6 @@ const loginReasons = {
             valid: (adminPinVerified && timeDiff <= MAX_VERIFICATION_TIME) 
         });
         
-        // Si no hay verificación o ha expirado, redirigir a selección de perfiles
         if (!adminPinVerified || timeDiff > MAX_VERIFICATION_TIME) {
             console.log('Acceso a página de administrador sin verificación de PIN. Redirigiendo...');
             showAdminPinAlert();
@@ -79,7 +74,6 @@ const loginReasons = {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const currentTime = Math.floor(Date.now() / 1000);
         
-        // Verificar expiración si existe la propiedad exp
         if (payload.exp && payload.exp < currentTime) {
             console.log('Token expirado. Redirigiendo a login...');
             localStorage.removeItem('token');
@@ -91,7 +85,6 @@ const loginReasons = {
             return false;
         }
         
-        // Si llegamos aquí, la autenticación es válida
         return true;
     } catch (error) {
         console.error('Error al verificar token:', error);
@@ -102,29 +95,22 @@ const loginReasons = {
 
 // Función para mostrar alerta y redirigir
 function showAuthAlert(reason = 'login_required') {
-    // Detener la carga de la página inmediatamente
     window.stop();
     
-    // Guardar la URL actual para redireccionar después del login
     sessionStorage.setItem('redirectAfterLogin', window.location.href);
     
-    // Mostrar alerta nativa del navegador
     alert(loginReasons[reason] || loginReasons['login_required']);
     
-    // Determinar la ruta correcta según la estructura del sitio
-    // Usar una ruta absoluta desde la raíz del sitio
     window.location.href = '../shared/login.html?reason=' + reason;
 }
 
 // Función para mostrar alerta de PIN de administrador y redirigir
 function showAdminPinAlert() {
-    // Detener la carga de la página inmediatamente
     window.stop();
     
     // Guardar la URL actual para redireccionar después de la verificación
     sessionStorage.setItem('adminRedirectAfterPin', window.location.href);
     
-    // Mostrar alerta nativa del navegador
     alert(loginReasons['admin_pin_required']);
     
     // Redirigir a selección de perfiles con parámetro para solicitar PIN
@@ -134,7 +120,6 @@ function showAdminPinAlert() {
 
 // Exportar función para uso explícito si es necesario
 window.checkAuth = function() {
-    // Obtener la página actual
     const path = window.location.pathname;
     const currentPage = path.split('/').pop() || 'login.html';
     
@@ -155,7 +140,6 @@ window.checkAuth = function() {
     return true;
 };
 
-// Marcar como verificado el PIN de administrador
 window.markAdminPinVerified = function() {
     sessionStorage.setItem('adminPinVerified', 'true');
     sessionStorage.setItem('adminPinVerifiedTime', Date.now().toString());

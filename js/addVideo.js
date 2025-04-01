@@ -17,14 +17,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Variables globales
     let currentPlaylistName = '';
     
-    // Inicialización
     init();
     
-    /**
-     * Inicializa la página
-     */
     function init() {
-        // Mostrar el nombre de usuario en la navbar
+
         displayUserName();
         
         // Obtener el ID de la playlist de la URL
@@ -49,9 +45,6 @@ document.addEventListener('DOMContentLoaded', function() {
         setupEventListeners();
     }
     
-    /**
-     * Muestra el nombre del usuario en la navbar
-     */
     function displayUserName() {
         const userName = localStorage.getItem('userName');
         if (userName) {
@@ -59,9 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    /**
-     * Configura los event listeners
-     */
     function setupEventListeners() {
         // Validación de campos en tiempo real
         videoNameInput.addEventListener('blur', function() {
@@ -333,7 +323,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            // Siempre limpiar localStorage y redirigir, sin importar la respuesta del API
             localStorage.removeItem('token');
             localStorage.removeItem('adminId');
             localStorage.removeItem('userName');
@@ -341,7 +330,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Mostrar mensaje de éxito
             window.Notifications.showSuccess('auth_logout_success', 'Sesión cerrada');
             
-            // Redireccionar después de un breve retraso
             setTimeout(() => {
                 window.location.href = '../shared/login.html';
             }, 1000);

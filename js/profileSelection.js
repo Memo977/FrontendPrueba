@@ -1,10 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Referencias a elementos del DOM
   const profilesContainer = document.getElementById("profilesContainer");
   const switchAccountBtn = document.getElementById("switchAccountBtn");
   const adminNavBtn = document.getElementById("adminNavBtn");
 
-  // Referencias para el modal de PIN
   const pinModal = document.getElementById("pinModal");
   const profileNameInModal = document.getElementById("profileNameInModal");
   const pinCircles = document.querySelectorAll(".pin-circle");
