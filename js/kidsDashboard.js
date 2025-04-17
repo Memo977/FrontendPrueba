@@ -111,7 +111,9 @@ document.addEventListener("DOMContentLoaded", function () {
     closeSearchBtn.addEventListener("click", function () {
       searchResultsSection.style.display = "none";
       searchInput.value = "";
-    });
+      
+      document.getElementById("playlistsContainer").style.display = "block";
+  });
 
     // Evento para reproducción automática
     autoplaySwitch.addEventListener("change", function () {
@@ -418,21 +420,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const searchTerm = searchInput.value.trim();
 
     if (!searchTerm) {
-      return;
+        return;
     }
 
     try {
-      const token = localStorage.getItem("token");
-      // Mostrar sección de resultados con indicador de carga
-      searchResultsSection.style.display = "block";
-      searchResults.innerHTML = `
-                <div class="col-12 text-center py-3">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Buscando...</span>
-                    </div>
-                    <p class="mt-2">Buscando "${searchTerm}"...</p>
+        const token = localStorage.getItem("token");
+        // Mostrar sección de resultados con indicador de carga
+        searchResultsSection.style.display = "block";
+        
+        document.getElementById("playlistsContainer").style.display = "none";
+        
+        searchResults.innerHTML = `
+            <div class="col-12 text-center py-3">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Buscando...</span>
                 </div>
-            `;
+                <p class="mt-2">Buscando "${searchTerm}"...</p>
+            </div>
+        `;
 
       // Realizar la búsqueda
       const response = await fetch(
