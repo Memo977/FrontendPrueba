@@ -141,17 +141,19 @@ document.addEventListener("DOMContentLoaded", function () {
         currentProfile.full_name
       );
       console.log("PIN utilizado:", currentProfile.pin);
+      console.log("Profile ID:", currentProfile._id);
 
       // Obtenemos el token del administrador para mayor compatibilidad
       const token = localStorage.getItem("token");
 
+      // Importante: Asegurarnos de usar el endpoint correcto que filtra por ID del perfil
       const response = await fetch(
-        "http://localhost:3000/api/restricted/playlists",
+        `http://localhost:3000/api/restricted/playlists?profileId=${currentProfile._id}`,
         {
           method: "GET",
           headers: {
             "x-restricted-pin": currentProfile.pin,
-            Authorization: `Bearer ${token}`, // Añadimos también el token del administrador
+            "Authorization": `Bearer ${token}`, // Añadimos el token del administrador
           },
         }
       );
@@ -191,6 +193,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     <i class="bi bi-exclamation-triangle"></i>
                     <h3>No se pudieron cargar las playlists</h3>
                     <p>Hubo un problema al comunicarse con el servidor. ${error.message}</p>
+                    <button class="btn btn-primary mt-3" onclick="window.location.reload()">
+                        <i class="bi bi-arrow-clockwise me-2"></i>Intentar de nuevo
+                    </button>
                 </div>
             `;
     }
@@ -270,7 +275,7 @@ document.addEventListener("DOMContentLoaded", function () {
           method: "GET",
           headers: {
             "x-restricted-pin": currentProfile.pin,
-            Authorization: `Bearer ${token}`, // Añadimos también el token del administrador
+            "Authorization": `Bearer ${token}`,
           },
         }
       );
@@ -322,6 +327,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="empty-playlist">
                         <i class="bi bi-exclamation-triangle"></i>
                         <p>Error al cargar los videos: ${error.message}</p>
+                        <button class="btn btn-sm btn-outline-primary mt-2" onclick="loadVideosForPlaylist('${playlistId}', this.parentNode.parentNode.parentNode)">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Reintentar
+                        </button>
                     </div>
                 </div>
             `;
@@ -435,7 +443,7 @@ document.addEventListener("DOMContentLoaded", function () {
           method: "GET",
           headers: {
             "x-restricted-pin": currentProfile.pin,
-            Authorization: `Bearer ${token}`,
+            "Authorization": `Bearer ${token}`,
           },
         }
       );
@@ -480,6 +488,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         <i class="bi bi-exclamation-triangle"></i>
                         <h3>Error al buscar</h3>
                         <p>Ocurrió un problema al realizar la búsqueda</p>
+                        <button class="btn btn-primary mt-3" onclick="handleSearch()">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Intentar de nuevo
+                        </button>
                     </div>
                 </div>
             `;
@@ -568,7 +579,7 @@ document.addEventListener("DOMContentLoaded", function () {
           method: "GET",
           headers: {
             "x-restricted-pin": currentProfile.pin,
-            Authorization: `Bearer ${token}`, // Añadir el token de autorización
+            "Authorization": `Bearer ${token}`,
           },
         }
       );

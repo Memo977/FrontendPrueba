@@ -27,8 +27,10 @@ document.addEventListener("DOMContentLoaded", function () {
     // Borrar cualquier verificación de administrador existente
     sessionStorage.removeItem("adminPinVerified");
     sessionStorage.removeItem("adminPinVerifiedTime");
+    
+    // Borrar cualquier perfil activo previamente
+    localStorage.removeItem("currentProfile");
 
-    // Tu código de inicialización existente...
     // Verificar si hay sesión de administrador
     const token = localStorage.getItem("token");
     if (!token) {
@@ -39,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <i class="bi bi-exclamation-triangle-fill me-2"></i>
                         Sesión expirada o no iniciada
                         <div class="mt-3">
-                            <a href="login.html" class="btn btn-primary">
+                            <a href="../shared/login.html" class="btn btn-primary">
                                 <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión
                             </a>
                         </div>
@@ -162,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
 
       const response = await fetch(
-        "http://localhost:3000/api/admin/restricted_users",
+        "http://localhost:3000/api/public/profiles",
         {
           method: "GET",
           headers: {
